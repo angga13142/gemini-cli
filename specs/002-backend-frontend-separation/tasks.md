@@ -141,11 +141,11 @@ UI-related imports or calls (console.log, chalk, prompts, etc.).
 
 #### Phase 2: Logic Extraction (The Purge)
 
-- [ ] T034 [US1] Review packages/cli/src/ui/auth/useAuth.ts for backend logic to
+- [x] T034 [US1] Review packages/cli/src/ui/auth/useAuth.ts for backend logic to
       extract
-- [ ] T035 [US1] Extract auth logic from useAuth.ts to
+- [x] T035 [US1] Extract auth logic from useAuth.ts to
       packages/core/src/core/auth/authService.ts
-- [ ] T036 [US1] Update useAuth.ts in packages/cli/src/ui/auth/useAuth.ts to
+- [x] T036 [US1] Update useAuth.ts in packages/cli/src/ui/auth/useAuth.ts to
       call authService
 - [ ] T037 [US1] Review packages/cli/src/ui/hooks/slashCommandProcessor.ts for
       backend logic

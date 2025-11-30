@@ -4,8 +4,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// Export contracts
-export * from './contracts/index.js';
+// Export contracts (but exclude AuthService to avoid conflict with class)
+export type {
+  ApiRequest,
+  ApiResponse,
+  ResponseMetadata,
+  ResponseChunk,
+  ApiService,
+  ChatState,
+  SessionMetadata,
+  StateService,
+  AuthResult,
+  AuthRequest,
+} from './contracts/index.js';
+export {
+  BackendError,
+  ErrorType,
+  ErrorCode,
+  createBackendError,
+} from './contracts/errors.js';
 
 // Export config
 export * from './config/config.js';
@@ -45,6 +62,9 @@ export * from './code_assist/oauth2.js';
 export * from './code_assist/server.js';
 export * from './code_assist/types.js';
 export * from './core/auth/apiKeyCredentialStorage.js';
+export { AuthService } from './core/auth/authService.js';
+// Re-export AuthService type interface for contracts
+export type { IAuthService as AuthServiceInterface } from './contracts/index.js';
 
 // Export utilities
 export * from './utils/paths.js';

@@ -34,4 +34,5 @@ export {
 export type { ChatState, SessionMetadata, StateService } from './state.js';
 
 // Auth Contracts
-export type { AuthResult, AuthRequest, AuthService } from './auth.js';
+export type { AuthResult, AuthRequest } from './auth.js';
+export type { AuthService as IAuthService } from './auth.js';

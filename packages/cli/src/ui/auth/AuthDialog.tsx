@@ -150,7 +150,7 @@ export function AuthDialog({
   );
 
   const handleAuthSelect = (authMethod: AuthType) => {
-    const error = validateAuthMethodWithSettings(authMethod, settings);
+    const error = validateAuthMethodWithSettings(authMethod, settings, config);
     if (error) {
       onAuthError(error);
     } else {

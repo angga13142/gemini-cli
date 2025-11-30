@@ -49,6 +49,10 @@ describe('useAuth', () => {
   });
 
   describe('validateAuthMethodWithSettings', () => {
+    const mockConfig = {
+      refreshAuth: vi.fn(),
+    } as unknown as Config;
+
     it('should return error if auth type is enforced and does not match', () => {
       const settings = {
         merged: {
@@ -63,6 +67,7 @@ describe('useAuth', () => {
       const error = validateAuthMethodWithSettings(
         AuthType.USE_GEMINI,
         settings,
+        mockConfig,
       );
       expect(error).toContain('Authentication is enforced to be oauth');
     });
@@ -81,6 +86,7 @@ describe('useAuth', () => {
       const error = validateAuthMethodWithSettings(
         AuthType.LOGIN_WITH_GOOGLE,
         settings,
+        mockConfig,
       );
       expect(error).toBeNull();
     });
@@ -97,6 +103,7 @@ describe('useAuth', () => {
       const error = validateAuthMethodWithSettings(
         AuthType.USE_GEMINI,
         settings,
+        mockConfig,
       );
       expect(error).toBeNull();
     });
@@ -114,6 +121,7 @@ describe('useAuth', () => {
       const error = validateAuthMethodWithSettings(
         AuthType.LOGIN_WITH_GOOGLE,
         settings,
+        mockConfig,
       );
       expect(error).toBe('Validation Error');
       expect(mockValidateAuthMethod).toHaveBeenCalledWith(

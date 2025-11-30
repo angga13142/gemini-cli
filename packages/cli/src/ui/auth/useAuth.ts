@@ -6,32 +6,22 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { LoadedSettings } from '../../config/settings.js';
-import {
-  AuthType,
-  type Config,
-  loadApiKey,
-  debugLogger,
-} from '@google/gemini-cli-core';
-import { getErrorMessage } from '@google/gemini-cli-core';
+import { AuthType, type Config } from '@google/gemini-cli-core';
+import { AuthService } from '@google/gemini-cli-core';
 import { AuthState } from '../types.js';
-import { validateAuthMethod } from '../../config/auth.js';
 
+/**
+ * Validate authentication method with settings
+ * This is a wrapper around AuthService.validateAuthMethodWithSettings
+ * for backward compatibility with existing code.
+ */
 export function validateAuthMethodWithSettings(
   authType: AuthType,
   settings: LoadedSettings,
+  config: Config,
 ): string | null {
-  const enforcedType = settings.merged.security?.auth?.enforcedType;
-  if (enforcedType && enforcedType !== authType) {
-    return `Authentication is enforced to be ${enforcedType}, but you are currently using ${authType}.`;
-  }
-  if (settings.merged.security?.auth?.useExternal) {
-    return null;
-  }
-  // If using Gemini API key, we don't validate it here as we might need to prompt for it.
-  if (authType === AuthType.USE_GEMINI) {
-    return null;
-  }
-  return validateAuthMethod(authType);
+  const authService = new AuthService(config);
+  return authService.validateAuthMethodWithSettings(authType, settings);
 }
 
 export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
@@ -44,6 +34,9 @@ export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
     string | undefined
   >(undefined);
 
+  // Create auth service instance
+  const authService = useCallback(() => new AuthService(config), [config]);
+
   const onAuthError = useCallback(
     (error: string | null) => {
       setAuthError(error);
@@ -55,12 +48,10 @@ export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
   );
 
   const reloadApiKey = useCallback(async () => {
-    const storedKey = (await loadApiKey()) ?? '';
-    const envKey = process.env['GEMINI_API_KEY'] ?? '';
-    const key = envKey || storedKey;
+    const key = await authService().loadApiKey();
     setApiKeyDefaultValue(key);
     return key; // Return the key for immediate use
-  }, []);
+  }, [authService]);
 
   useEffect(() => {
     if (authState === AuthState.AwaitingApiKeyInput) {
@@ -94,32 +85,46 @@ export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
         }
       }
 
-      const error = validateAuthMethodWithSettings(authType, settings);
+      // Use auth service to validate
+      const service = authService();
+      const error = service.validateAuthMethodWithSettings(authType, settings);
       if (error) {
         onAuthError(error);
         return;
       }
 
-      const defaultAuthType = process.env['GEMINI_DEFAULT_AUTH_TYPE'];
-      if (
-        defaultAuthType &&
-        !Object.values(AuthType).includes(defaultAuthType as AuthType)
-      ) {
-        onAuthError(
-          `Invalid value for GEMINI_DEFAULT_AUTH_TYPE: "${defaultAuthType}". ` +
-            `Valid values are: ${Object.values(AuthType).join(', ')}.`,
-        );
-        return;
+      // Map AuthType to AuthRequest method
+      let method: 'api-key' | 'oauth' | 'service-account';
+      switch (authType) {
+        case AuthType.USE_GEMINI:
+          method = 'api-key';
+          break;
+        case AuthType.LOGIN_WITH_GOOGLE:
+          method = 'oauth';
+          break;
+        case AuthType.COMPUTE_ADC:
+        case AuthType.USE_VERTEX_AI:
+          method = 'service-account';
+          break;
+        default:
+          method = 'api-key';
       }
 
-      try {
-        await config.refreshAuth(authType);
+      // Authenticate using auth service
+      const apiKey =
+        authType === AuthType.USE_GEMINI ? await reloadApiKey() : undefined;
+      const authResult = await service.authenticate({
+        method,
+        apiKey,
+      });
 
-        debugLogger.log(`Authenticated via "${authType}".`);
+      if (authResult.status === 'authenticated') {
         setAuthError(null);
         setAuthState(AuthState.Authenticated);
-      } catch (e) {
-        onAuthError(`Failed to login. Message: ${getErrorMessage(e)}`);
+      } else if (authResult.status === 'failed' && authResult.error) {
+        onAuthError(authResult.error.message);
+      } else {
+        onAuthError('Authentication failed with unknown error');
       }
     })();
   }, [
@@ -130,6 +135,7 @@ export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
     setAuthError,
     onAuthError,
     reloadApiKey,
+    authService,
   ]);
 
   return {
