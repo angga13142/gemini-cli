@@ -336,7 +336,8 @@ describe('ClearcutLogger', () => {
         env: {
           TERM_PROGRAM: 'vscode',
           GITHUB_SHA: undefined,
-          MONOSPACE_ENV: '',
+          MONOSPACE_ENV: undefined,
+          CURSOR_TRACE_ID: undefined,
         },
         expected: 'vscode',
       },
@@ -365,6 +366,7 @@ describe('ClearcutLogger', () => {
           MONOSPACE_ENV: 'true',
           TERM_PROGRAM: 'vscode',
           GITHUB_SHA: undefined,
+          CURSOR_TRACE_ID: undefined,
         },
         expected: 'firebasestudio',
       },
@@ -391,7 +393,12 @@ describe('ClearcutLogger', () => {
       ({ env, expected }) => {
         const { logger } = setup({});
         for (const [key, value] of Object.entries(env)) {
-          vi.stubEnv(key, value);
+          if (value === undefined) {
+            // Explicitly delete env var to ensure it's cleared
+            delete process.env[key];
+          } else {
+            vi.stubEnv(key, value);
+          }
         }
         const event = logger?.createLogEvent(EventNames.API_ERROR, []);
         expect(event?.event_metadata[0]).toContainEqual({

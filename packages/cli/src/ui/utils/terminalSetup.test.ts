@@ -62,6 +62,9 @@ describe('terminalSetup', () => {
 
   describe('detectTerminal', () => {
     it('should detect VS Code from env var', async () => {
+      // Clear Cursor-specific env vars to ensure VS Code detection
+      delete process.env['CURSOR_TRACE_ID'];
+      delete process.env['VSCODE_GIT_ASKPASS_MAIN'];
       process.env['TERM_PROGRAM'] = 'vscode';
       const result = await terminalSetup();
       expect(result.message).toContain('VS Code');
@@ -74,12 +77,18 @@ describe('terminalSetup', () => {
     });
 
     it('should detect Windsurf from env var', async () => {
+      // Clear Cursor-specific env vars to ensure Windsurf detection
+      delete process.env['CURSOR_TRACE_ID'];
       process.env['VSCODE_GIT_ASKPASS_MAIN'] = '/path/to/windsurf/askpass';
       const result = await terminalSetup();
       expect(result.message).toContain('Windsurf');
     });
 
     it('should detect from parent process', async () => {
+      // Clear all env vars that might interfere with parent process detection
+      delete process.env['CURSOR_TRACE_ID'];
+      delete process.env['VSCODE_GIT_ASKPASS_MAIN'];
+      delete process.env['TERM_PROGRAM'];
       mocks.platform.mockReturnValue('linux');
       mocks.exec.mockImplementation((cmd, cb) => {
         cb(null, { stdout: 'code\n' });
