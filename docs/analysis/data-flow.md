@@ -1,8 +1,19 @@
 # Data Flow Analysis
 
 **Created**: 2025-11-30  
+**Last Updated**: 2025-01-27 (Post Phase 3.2 Refactoring)  
 **Purpose**: Document complete data flow from user input through all
 transformation stages to final formatted output
+
+## ⚠️ Update Notice
+
+This document has been updated to reflect changes after Phase 3.2 refactoring
+(Backend-Frontend Separation). The data flow now uses backend services:
+
+- Step 2: `parseSlashCommand` from `SlashCommandService` (backend)
+- Step 3: `parseAllAtCommands`, `resolveAtCommandPaths` from `AtCommandService`
+  (backend)
+- Step 6: API calls use `ApiService.sendMessageStreamWithEvents()` (backend)
 
 ## Sample Input
 
@@ -44,7 +55,8 @@ through the full data flow pipeline. They are executed directly by
 
 - **Input Format**: `string` (sanitized user input)
   - Example: `"Explain this code @src/main.ts"`
-- **Component**: `parseSlashCommand()` in `packages/cli/src/utils/commands.ts`
+- **Component**: `parseSlashCommand()` from `SlashCommandService` in
+  `packages/core/src/core/api/slashCommandService.ts`
 - **Transformation**:
   - Checks if input starts with `/` (slash command)
   - If slash command: parses into `ParsedSlashCommand` with `commandToExecute`,
@@ -61,9 +73,12 @@ through the full data flow pipeline. They are executed directly by
     };
     ```
   - For non-slash commands: returns original `string`
-- **File Path**: `packages/cli/src/utils/commands.ts`
+- **File Path**: `packages/core/src/core/api/slashCommandService.ts` (backend
+  service)
 - **Key Function**:
-  `parseSlashCommand(query: string, commands: readonly SlashCommand[]): ParsedSlashCommand`
+  `parseSlashCommand(query: string, commands: readonly CommandForParsing[]): ParsedSlashCommand`
+- **Note**: This is now a backend service, called from frontend via
+  `handleSlashCommand()`
 
 ---
 
@@ -72,9 +87,15 @@ through the full data flow pipeline. They are executed directly by
 - **Input Format**: `string` (with @commands)
   - Example: `"Explain this code @src/main.ts"`
 - **Component**: `handleAtCommand()` in
-  `packages/cli/src/ui/hooks/atCommandProcessor.ts`
+  `packages/cli/src/ui/hooks/atCommandProcessor.ts` (uses `AtCommandService`
+  from backend)
+- **Backend Service**: `AtCommandService` in
+  `packages/core/src/core/api/atCommandService.ts`
 - **Transformation**:
-  - Parses `@path` commands using `parseAllAtCommands()`
+  - Parses `@path` commands using `AtCommandService.parseAllAtCommands()`
+    (backend)
+  - Resolves file paths using `AtCommandService.resolveAtCommandPaths()`
+    (backend)
   - Reads file content using `ReadManyFilesTool`
   - Combines text query with file content into structured `PartListUnion`
   - Handles file filtering (git ignore, gemini ignore)
@@ -92,9 +113,14 @@ through the full data flow pipeline. They are executed directly by
       { fileData: { mimeType: 'text/plain', fileUri: 'src/main.ts' } },
     ];
     ```
-- **File Path**: `packages/cli/src/ui/hooks/atCommandProcessor.ts`
-- **Key Function**:
-  `handleAtCommand(params: HandleAtCommandParams): Promise<HandleAtCommandResult>`
+- **File Path**:
+  - Frontend: `packages/cli/src/ui/hooks/atCommandProcessor.ts`
+  - Backend Service: `packages/core/src/core/api/atCommandService.ts`
+- **Key Functions**:
+  - Frontend:
+    `handleAtCommand(params: HandleAtCommandParams): Promise<HandleAtCommandResult>`
+  - Backend: `parseAllAtCommands(query: string): ParsedAtCommand[]`,
+    `resolveAtCommandPaths(commands: ParsedAtCommand[], config: Config): Promise<ResolvedAtCommandPaths>`
 
 ---
 
@@ -156,35 +182,49 @@ through the full data flow pipeline. They are executed directly by
 
 ### Step 6: HTTP Request
 
-- **Input Format**: `GenerateContentParameters` (from Step 5)
-  - Contains: `{ model, contents, config }`
-- **Component**: `ContentGenerator.generateContentStream()` in
-  `packages/core/src/core/contentGenerator.ts`
+- **Input Format**: `PartListUnion` (from Step 4) or `ApiRequest` (structured
+  request)
+  - Contains:
+    `{ message: PartListUnion, config?: GenerateContentConfig, metadata?: Record<string, unknown> }`
+- **Component**: `ApiService.sendMessageStreamWithEvents()` in
+  `packages/core/src/core/api/apiService.ts` (backend service)
+- **Internal Component**: `ContentGenerator.generateContentStream()` in
+  `packages/core/src/core/contentGenerator.ts` (called by ApiService)
 - **Transformation**:
-  - Makes HTTP POST request to Gemini API endpoint
+  - ApiService wraps GeminiClient and provides clean interface
+  - Makes HTTP POST request to Gemini API endpoint via GeminiClient
   - Uses `GoogleGenAI.models.generateContentStream()`
   - Sends request with authentication headers (API key or OAuth token)
   - Receives streaming response chunks
-- **Output Format**: `AsyncGenerator<GenerateContentResponse>` (streaming
-  response)
+  - Converts `ServerGeminiStreamEvent` to `ResponseChunk` (for simple API calls)
+    or returns full event stream
+- **Output Format**: `AsyncGenerator<ServerGeminiStreamEvent>` (full event
+  stream) or `AsyncGenerator<ResponseChunk>` (simplified)
   - TypeScript:
+
     ```typescript
-    type GenerateContentResponse = {
-      candidates?: Candidate[];
-      usageMetadata?: UsageMetadata;
-      modelVersion?: string;
-      promptFeedback?: PromptFeedback;
-    };
-    type Candidate = {
-      content?: Content;
-      finishReason?: FinishReason;
-      safetyRatings?: SafetyRating[];
+    // Full event stream (for complex UI interactions)
+    type ServerGeminiStreamEvent =
+      | ServerGeminiContentEvent
+      | ServerGeminiFinishedEvent
+      | ServerGeminiToolCallRequestEvent
+      | ...;
+
+    // Simplified chunks (for simple API calls)
+    type ResponseChunk = {
+      text: string;
+      isComplete: boolean;
+      metadata?: Partial<ResponseMetadata>;
     };
     ```
+
   - Each chunk contains partial response data
-- **File Path**: `packages/core/src/core/contentGenerator.ts`
-- **Key Function**:
-  `generateContentStream(request: GenerateContentParameters, userPromptId: string): Promise<AsyncGenerator<GenerateContentResponse>>`
+- **File Path**:
+  - Backend Service: `packages/core/src/core/api/apiService.ts`
+  - Internal: `packages/core/src/core/contentGenerator.ts`
+- **Key Functions**:
+  - `ApiServiceImpl.sendMessageStreamWithEvents(request: PartListUnion, signal: AbortSignal, promptId: string): AsyncGenerator<ServerGeminiStreamEvent>`
+  - `ContentGenerator.generateContentStream(request: GenerateContentParameters, userPromptId: string): Promise<AsyncGenerator<GenerateContentResponse>>`
 
 ---
 
@@ -391,12 +431,18 @@ string (user input)
 
 **Key Insights**:
 
-- Steps 1-4 are frontend transformations (UI layer)
+- Steps 1-4 are frontend transformations (UI layer), but Steps 2-3 now use
+  backend services
 - Steps 5-7 are backend transformations (API layer)
 - Step 8 is frontend transformation (display layer)
 - Data flows: string → PartListUnion → GenerateContentParameters →
   GenerateContentResponse → string → React.JSX.Element
 - Slash commands exit early at Step 2 and don't proceed through full pipeline
+- **Post Phase 3.2**: Backend services provide clean interfaces:
+  - Step 2: `SlashCommandService.parseSlashCommand()` (backend)
+  - Step 3: `AtCommandService.parseAllAtCommands()`, `resolveAtCommandPaths()`
+    (backend)
+  - Step 6: `ApiService.sendMessageStreamWithEvents()` (backend)
 
 ## Notes
 

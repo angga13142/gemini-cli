@@ -1,8 +1,9 @@
 # Codebase Architecture Analysis - Summary
 
 **Created**: 2025-11-30  
+**Last Updated**: 2025-01-27 (Post Phase 3.2 Refactoring)  
 **Feature**: Codebase Architecture Analysis  
-**Status**: Complete
+**Status**: Complete (Updated for Backend-Frontend Separation)
 
 ## Executive Summary
 
@@ -27,18 +28,25 @@ The analysis covers:
 
 ## Key Findings
 
-### Backend Components (Otak) - 15 Components
+### Backend Components (Otak) - 20 Components (Updated)
 
 **Categories**:
 
-- **Authentication** (5): API key storage, auth method selection
+- **Authentication** (6): API key storage, AuthService, auth method selection
+- **API Service** (3): ApiService, SlashCommandService, AtCommandService (new
+  category)
 - **API Payload Construction** (2): Config creation, payload assembly
 - **HTTP Request Handling** (3): Content generator, streaming requests
 - **Response Parsing** (2): Stream processing, text extraction
-- **Data Processing** (3): Message streaming, content generation, chat
-  management
+- **Data Processing** (4): Session data conversion, message streaming, content
+  generation, chat management
 
-**Location**: Primarily in `packages/core/src/core/`
+**Location**: Organized in `packages/core/src/core/` with subdirectories:
+
+- `auth/` - Authentication components
+- `api/` - API service components
+- `processing/` - Data processing components
+- `state/` - State management components (prepared for future)
 
 **Preservation Status**: ✅ **ALL MUST BE PRESERVED** during refactoring
 
@@ -47,9 +55,9 @@ The analysis covers:
 **Categories**:
 
 - **Input Handling** (4): InputPrompt, command parsing, slash/@command
-  processing
+  processing (now uses backend services)
 - **Output Formatting** (3): Markdown display, tool results, ANSI output
-- **Navigation** (2): AppContainer, session browser
+- **Navigation** (2): AppContainer, session browser (now uses backend services)
 - **Display** (3): Input field, markdown content, tool results
 
 **Location**: Primarily in `packages/cli/src/ui/`
@@ -57,9 +65,18 @@ The analysis covers:
 **Replaceability**:
 
 - **High** (9 components): Can be easily replaced with alternative UI frameworks
-- **Medium** (3 components): Require some refactoring but can be replaced
+- **Medium** (3 components): Now use backend services, cleaner separation
+  achieved
 
 **Preservation Status**: ❌ **ALL CAN BE REPLACED** during refactoring
+
+**Post Phase 3.2 Changes**:
+
+- Frontend components now use backend services instead of direct backend access
+- `handleSlashCommand` → `SlashCommandService` (backend)
+- `handleAtCommand` → `AtCommandService` (backend)
+- `useSessionBrowser` → `DataProcessor` (backend)
+- API calls → `ApiService` (backend)
 
 ### Data Flow Pipeline - 8 Steps
 

@@ -1,19 +1,31 @@
 # Frontend/UI Components (Wajah) - Analysis Results
 
 **Created**: 2025-11-30  
+**Last Updated**: 2025-01-27 (Post Phase 3.2 Refactoring)  
 **Purpose**: Document all frontend/UI components that can be replaced during
 refactoring
+
+## ⚠️ Update Notice
+
+This document has been updated to reflect changes after Phase 3.2 refactoring
+(Backend-Frontend Separation). Frontend components now use backend services
+instead of direct backend access:
+
+- `handleSlashCommand` uses `SlashCommandService` from backend
+- `handleAtCommand` uses `AtCommandService` from backend
+- `useSessionBrowser` uses `DataProcessor` from backend
+- API calls use `ApiService` from backend
 
 ## Component Categories
 
 ### Input Handling Components
 
-| File Path                                          | Component/Function Name | UI Responsibility                                                          | Category       | Replaceability | Dependencies                                           | Preserve |
-| -------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------- | -------------- | -------------- | ------------------------------------------------------ | -------- |
-| packages/cli/src/ui/components/InputPrompt.tsx     | InputPrompt             | User input collection, keyboard handling, history navigation, autocomplete | input-handling | High           | useInputHistory, useShellHistory, useCommandCompletion | ❌       |
-| packages/cli/src/utils/commands.ts                 | parseSlashCommand       | Parse slash command strings into command, args, and canonical path         | input-handling | High           | SlashCommand types                                     | ❌       |
-| packages/cli/src/ui/hooks/slashCommandProcessor.ts | handleSlashCommand      | Process and execute slash commands (e.g., /help, /clear)                   | input-handling | Medium         | Config, CommandService, addItem                        | ❌       |
-| packages/cli/src/ui/hooks/atCommandProcessor.ts    | handleAtCommand         | Process @path commands, read files, and prepare query with file content    | input-handling | Medium         | Config, ReadManyFilesTool, addItem                     | ❌       |
+| File Path                                          | Component/Function Name | UI Responsibility                                                                                            | Category       | Replaceability | Dependencies                                           | Preserve |
+| -------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------ | -------------- | -------------- | ------------------------------------------------------ | -------- |
+| packages/cli/src/ui/components/InputPrompt.tsx     | InputPrompt             | User input collection, keyboard handling, history navigation, autocomplete                                   | input-handling | High           | useInputHistory, useShellHistory, useCommandCompletion | ❌       |
+| packages/cli/src/utils/commands.ts                 | parseSlashCommand       | Parse slash command strings into command, args, and canonical path                                           | input-handling | High           | SlashCommand types                                     | ❌       |
+| packages/cli/src/ui/hooks/slashCommandProcessor.ts | handleSlashCommand      | Process and execute slash commands (e.g., /help, /clear) - uses SlashCommandService from backend             | input-handling | Medium         | Config, SlashCommandService, addItem                   | ❌       |
+| packages/cli/src/ui/hooks/atCommandProcessor.ts    | handleAtCommand         | Process @path commands, read files, and prepare query with file content - uses AtCommandService from backend | input-handling | Medium         | Config, AtCommandService, addItem                      | ❌       |
 
 ### Output Formatting Components
 
@@ -25,10 +37,10 @@ refactoring
 
 ### Navigation Components
 
-| File Path                                      | Component/Function Name | UI Responsibility                                                | Category   | Replaceability | Dependencies                                           | Preserve |
-| ---------------------------------------------- | ----------------------- | ---------------------------------------------------------------- | ---------- | -------------- | ------------------------------------------------------ | -------- |
-| packages/cli/src/ui/AppContainer.tsx           | AppContainer            | Main UI container, orchestrates all UI components, manages state | navigation | Medium         | Config, useHistory, useSettings, InputPrompt, Composer | ❌       |
-| packages/cli/src/ui/hooks/useSessionBrowser.ts | useSessionBrowser       | Session browser hook for loading/deleting conversation sessions  | navigation | Medium         | Config, fs, path                                       | ❌       |
+| File Path                                      | Component/Function Name | UI Responsibility                                                                                 | Category   | Replaceability | Dependencies                                           | Preserve |
+| ---------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------- | ---------- | -------------- | ------------------------------------------------------ | -------- |
+| packages/cli/src/ui/AppContainer.tsx           | AppContainer            | Main UI container, orchestrates all UI components, manages state                                  | navigation | Medium         | Config, useHistory, useSettings, InputPrompt, Composer | ❌       |
+| packages/cli/src/ui/hooks/useSessionBrowser.ts | useSessionBrowser       | Session browser hook for loading/deleting conversation sessions - uses DataProcessor from backend | navigation | Medium         | Config, DataProcessor, fs, path                        | ❌       |
 
 ### Display Components
 
@@ -59,8 +71,10 @@ UI-focused
 
 - **Medium Replaceability (3 components)**: handleSlashCommand, handleAtCommand,
   AppContainer, useSessionBrowser
-  - These components have some backend logic integration
-  - Require refactoring to separate UI from business logic
+  - These components now use backend services (SlashCommandService,
+    AtCommandService, DataProcessor)
+  - Backend logic has been extracted to backend services
+  - UI components act as adapters between UI and backend services
   - Still replaceable with proper abstraction layer
 
 ## Summary
@@ -88,8 +102,15 @@ UI-focused
 
 - All components in this document CAN be replaced during refactoring
 - Replaceability status indicates how easily the component can be swapped
-- Dependencies show which backend components this UI component uses
+- Dependencies show which backend services/components this UI component uses
 - Some components appear in multiple categories (e.g., InputPrompt is both
   input-handling and display)
-- Components marked as "Medium Replaceability" may need abstraction layers to
-  fully decouple from backend
+- **Post Phase 3.2**: Frontend components now use backend services instead of
+  direct backend access:
+  - `handleSlashCommand` → `SlashCommandService.parseSlashCommand()`
+  - `handleAtCommand` → `AtCommandService.parseAllAtCommands()`,
+    `resolveAtCommandPaths()`
+  - `useSessionBrowser` → `DataProcessor.convertSessionToHistoryFormats()`
+  - API calls → `ApiService.sendMessageStream()`, `ApiService.generateContent()`
+- Components marked as "Medium Replaceability" now have cleaner separation with
+  backend services

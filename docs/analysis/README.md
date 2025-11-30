@@ -41,20 +41,29 @@ components (Wajah), data flow patterns, and dependencies.
 
 ## Analysis Results Summary
 
-### Backend Components (Otak) - 15 Components
+### Backend Components (Otak) - 20 Components (Updated)
 
-**Location**: `packages/core/src/core/`  
+**Location**: `packages/core/src/core/` with subdirectories:
+
+- `auth/` - Authentication components
+- `api/` - API service components
+- `processing/` - Data processing components
+- `state/` - State management components (prepared for future)
+
 **Status**: ✅ **ALL MUST BE PRESERVED**
 
-- **Authentication** (5): loadApiKey, saveApiKey, clearApiKey, useAuthCommand,
-  refreshAuth
+- **Authentication** (6): loadApiKey, saveApiKey, clearApiKey, AuthService,
+  useAuthCommand, refreshAuth
+- **API Service** (3): ApiServiceImpl, parseSlashCommand (SlashCommandService),
+  parseAllAtCommands (AtCommandService)
 - **API Payload Construction** (2): createContentGeneratorConfig,
   makeApiCallAndProcessStream
 - **HTTP Request Handling** (3): createContentGenerator, generateContentStream,
   generateContent
 - **Response Parsing** (2): processStreamResponse, getResponseText
-- **Data Processing** (3): GeminiClient.sendMessageStream,
-  GeminiClient.generateContent, GeminiChat.sendMessageStream
+- **Data Processing** (4): convertSessionToHistoryFormats (DataProcessor),
+  GeminiClient.sendMessageStream, GeminiClient.generateContent,
+  GeminiChat.sendMessageStream
 
 **See**: [backend-components.md](./backend-components.md) for complete details
 
@@ -63,8 +72,8 @@ components (Wajah), data flow patterns, and dependencies.
 **Location**: `packages/cli/src/ui/`  
 **Status**: ❌ **ALL CAN BE REPLACED**
 
-- **Input Handling** (4): InputPrompt, parseSlashCommand, handleSlashCommand,
-  handleAtCommand
+- **Input Handling** (4): InputPrompt, parseSlashCommand (backend service),
+  handleSlashCommand (uses backend), handleAtCommand (uses backend)
 - **Output Formatting** (3): MarkdownDisplay, ToolResultDisplay, AnsiOutputText
 - **Navigation** (2): AppContainer, useSessionBrowser
 - **Display** (3): InputPrompt, MarkdownDisplay, ToolResultDisplay
@@ -208,5 +217,5 @@ This analysis followed the "Trace & Tag" methodology:
 
 ---
 
-**Last Updated**: 2025-11-30  
-**Status**: Complete ✅
+**Last Updated**: 2025-01-27 (Post Phase 3.2 Refactoring)  
+**Status**: Complete ✅ (Updated for Backend-Frontend Separation)
