@@ -271,8 +271,19 @@ strings are returned from backend to frontend.
       for display in packages/cli/src/ui/ (created errorFormatter.ts, updated
       useGeminiStream, usePromptCompletion, slashCommandProcessor)
 
-**Checkpoint**: At this point, User Story 2 should be complete - all data
-exchange uses structured contracts
+**Checkpoint**: ✅ User Story 2 COMPLETE - all data exchange uses structured
+contracts
+
+**Summary**:
+
+- ✅ ApiService and AuthService implement contract interfaces
+- ✅ Frontend adapters provide clean interface with contract types
+- ✅ UI components updated to use adapters
+- ✅ Error handling updated to catch and format BackendError
+- ✅ Internal methods (GeminiChat, GeminiClient) wrapped by ApiService -
+  contract requirement satisfied
+- ✅ All backend functions return structured data (verified)
+- ✅ No formatted strings returned from backend (verified)
 
 ---
 
