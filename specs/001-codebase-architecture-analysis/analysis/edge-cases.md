@@ -238,12 +238,159 @@ trace.
 
 ---
 
+---
+
+## Dependency Analysis Edge Cases
+
+### Version Conflicts Between Packages
+
+**Issue**: Some dependencies have different versions in different packages:
+
+- **zod**: `^3.25.76` in `packages/core/package.json` vs `^3.23.8` in
+  `packages/cli/package.json`
+- **@google/genai**: `1.30.0` in both packages (consistent)
+- **undici**: `^7.10.0` in both packages (consistent)
+
+**Analysis**:
+
+- Version conflicts can cause runtime issues if packages are not properly
+  isolated
+- zod version difference is minor (patch version) but should be resolved
+- Most dependencies are consistent across packages
+
+**Categorization Decision**: **Shared Dependency Issue**
+
+- zod is used in both packages for validation
+- Version mismatch should be resolved during refactoring
+- Consider using workspace dependency resolution to ensure single version
+
+**Recommendation**:
+
+- Standardize zod version across all packages (use `^3.25.76` or latest)
+- Use npm workspaces dependency hoisting to ensure single version
+- Document version resolution strategy in refactoring plan
+
+---
+
+### Unclear Categorization: marked
+
+**Issue**: `marked` (markdown parser) is listed in `packages/core/package.json`
+but could be used for both backend processing and UI display.
+
+**Analysis**:
+
+- **Backend Usage**: `packages/core/src/utils/memoryImportProcessor.ts` -
+  Processing markdown in backend
+- **UI Usage**: Not found in UI components (UI uses highlight.js/lowlight for
+  code display)
+- **Category**: Logic dependency (backend only)
+
+**Categorization Decision**: **Logic Dependency** (🟢)
+
+- Primary usage is in backend for markdown processing
+- UI uses different libraries (highlight.js, lowlight) for code display
+- No UI components import marked
+
+**Recommendation**:
+
+- Keep as logic dependency
+- Note that UI uses different markdown/code display libraries
+- If UI needs markdown parsing in future, consider if marked should be shared
+
+---
+
+### Shared Dependency: @google/gemini-cli-core
+
+**Issue**: `@google/gemini-cli-core` is a local workspace package imported by
+CLI package. It contains both backend logic and shared utilities.
+
+**Analysis**:
+
+- **Structure**: Core package contains backend logic (packages/core/src/core/)
+- **CLI Dependency**: CLI package imports core for backend functionality
+- **Shared Utilities**: Core also contains utilities used by both layers
+
+**Categorization Decision**: **Shared Dependency** (🟡)
+
+- Core package is essential for CLI functionality
+- Contains both backend logic and shared utilities
+- Cannot be removed but structure could be refactored
+
+**Recommendation**:
+
+- Keep as shared dependency
+- During refactoring, consider splitting core into:
+  - `@google/gemini-cli-backend` (pure backend logic)
+  - `@google/gemini-cli-shared` (shared utilities)
+- Current structure is acceptable but could be more modular
+
+---
+
+### Optional Dependencies: node-pty
+
+**Issue**: `node-pty` and `@lydell/node-pty` are optional dependencies with
+platform-specific variants.
+
+**Analysis**:
+
+- **Optional**: Only needed for interactive terminal features
+- **Platform-Specific**: Different packages for different platforms
+  (darwin-arm64, darwin-x64, linux-x64, win32-arm64, win32-x64)
+- **Usage**: Terminal operations, shell integration
+
+**Categorization Decision**: **Optional Logic Dependency** (🟡)
+
+- Required for interactive terminal features
+- Not needed for non-interactive CLI usage
+- Platform-specific packages complicate dependency management
+
+**Recommendation**:
+
+- Keep as optional dependency
+- Document that it's only needed for interactive terminal features
+- Consider if platform-specific packages can be consolidated
+- Note that non-interactive CLI can work without node-pty
+
+---
+
+### Dependency Used in Both Layers: simple-git, diff, glob
+
+**Issue**: Several dependencies (`simple-git`, `diff`, `glob`, `shell-quote`,
+`strip-ansi`, `mnemonist`, `open`, `read-package-up`) are listed in both
+`packages/core/package.json` and `packages/cli/package.json`.
+
+**Analysis**:
+
+- **Core Package**: Used in backend for file operations, text processing
+- **CLI Package**: Used in CLI for similar operations (file operations, text
+  processing)
+- **Category**: Logic dependencies (backend functionality)
+
+**Categorization Decision**: **Logic Dependencies** (🟢)
+
+- These are backend utilities used in both packages
+- CLI package duplicates some dependencies that core already has
+- Should be deduplicated during refactoring
+
+**Recommendation**:
+
+- Mark as logic dependencies
+- Note that CLI package duplicates core dependencies
+- During refactoring, consider:
+  - Moving shared utilities to core package
+  - Having CLI import from core instead of duplicating dependencies
+  - Using workspace dependency resolution to deduplicate
+
+---
+
 ## Notes
 
 - All edge cases documented here were discovered during Phase 3 (Backend
-  Components), Phase 4 (Frontend Components), and Phase 5 (Data Flow) analysis
+  Components), Phase 4 (Frontend Components), Phase 5 (Data Flow), and Phase 6
+  (Dependency Analysis) analysis
 - Recommendations are suggestions for future refactoring, not requirements for
   current analysis
 - Some components naturally serve multiple UI purposes (e.g., InputPrompt
   handles both input and display)
 - Data flow edge cases are expected behaviors that enhance system flexibility
+- Dependency edge cases highlight areas for improvement during refactoring

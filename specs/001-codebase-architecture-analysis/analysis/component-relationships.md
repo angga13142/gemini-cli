@@ -45,13 +45,55 @@ components
 
 ## Shared Component Relationships
 
-| Component                        | Used By | Relationship Type | Can Split? | Notes |
-| -------------------------------- | ------- | ----------------- | ---------- | ----- |
-| _[To be filled during analysis]_ |         |                   |            |       |
+| Component                   | Used By                                                                                      | Relationship Type | Can Split?   | Notes                                                                                                          |
+| --------------------------- | -------------------------------------------------------------------------------------------- | ----------------- | ------------ | -------------------------------------------------------------------------------------------------------------- |
+| useAuthCommand (useAuth.ts) | Frontend (UI hooks) and Backend (Config.refreshAuth, loadApiKey)                             | calls             | ⚠️ Can split | Located in UI directory but contains backend auth logic. Can be split into: backend auth logic + UI state hook |
+| Config (config.ts)          | Frontend (useAuthCommand) and Backend (createContentGeneratorConfig, createContentGenerator) | calls             | ⚠️ Can split | Configuration management used by both layers. Core config logic is backend, but CLI config extends it          |
+| zod (dependency)            | Frontend (UI validation) and Backend (config validation)                                     | uses              | ⚠️ Can split | Schema validation used in both layers. Can potentially use different validation libraries per layer            |
+| dotenv (dependency)         | Frontend (CLI config) and Backend (core config)                                              | uses              | ⚠️ Can split | Environment variable loading used in both layers. Can use different config loading strategies per layer        |
 
 ## Dependency Graph
 
-_[To be created as visual/text representation]_
+### Text Representation
+
+```
+Backend Layer (packages/core/src/core/)
+├── Authentication
+│   ├── loadApiKey → HybridTokenStorage
+│   ├── saveApiKey → HybridTokenStorage
+│   └── refreshAuth → createContentGeneratorConfig → createContentGenerator
+├── API Payload Construction
+│   ├── createContentGeneratorConfig → loadApiKey, Config
+│   └── makeApiCallAndProcessStream → ContentGenerator, GenerateContentConfig
+├── HTTP Request Handling
+│   ├── createContentGenerator → GoogleGenAI, ContentGeneratorConfig
+│   ├── generateContentStream → GoogleGenAI, GenerateContentParameters
+│   └── generateContent → GoogleGenAI, GenerateContentParameters
+├── Response Parsing
+│   ├── processStreamResponse → GenerateContentResponse
+│   └── getResponseText → GenerateContentResponse
+└── Data Processing
+    ├── GeminiClient.sendMessageStream → GeminiChat.sendMessageStream → makeApiCallAndProcessStream
+    ├── GeminiClient.generateContent → ContentGenerator.generateContent
+    └── GeminiChat.sendMessageStream → ContentGenerator, GenerateContentConfig
+
+Frontend Layer (packages/cli/src/ui/)
+├── Input Handling
+│   ├── InputPrompt → useInputHistory, useShellHistory, useCommandCompletion
+│   ├── parseSlashCommand → SlashCommand types
+│   ├── handleSlashCommand → Config, CommandService, addItem, parseSlashCommand
+│   └── handleAtCommand → Config, ReadManyFilesTool, addItem, parseAllAtCommands
+├── Output Formatting
+│   ├── MarkdownDisplay → ink, CodeColorizer, TableRenderer
+│   ├── ToolResultDisplay → MarkdownDisplay, DiffRenderer, AnsiOutput
+│   └── AnsiOutputText → ink Text component
+└── Navigation
+    ├── AppContainer → Config, useHistory, useSettings, InputPrompt, Composer, useSessionBrowser
+    └── useSessionBrowser → Config, fs, path
+
+Frontend-to-Backend Bridge
+└── useAuthCommand (UI) → Config.refreshAuth (Backend), loadApiKey (Backend)
+```
 
 ## Critical Relationships
 

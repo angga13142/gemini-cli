@@ -280,43 +280,43 @@ and essential status.
 
 ### Implementation for User Story 4
 
-- [ ] T071 [US4] Review root package.json dependencies in package.json
-- [ ] T072 [US4] Review packages/core/package.json dependencies in
+- [x] T071 [US4] Review root package.json dependencies in package.json
+- [x] T072 [US4] Review packages/core/package.json dependencies in
       packages/core/package.json
-- [ ] T073 [US4] Review packages/cli/package.json dependencies in
+- [x] T073 [US4] Review packages/cli/package.json dependencies in
       packages/cli/package.json
-- [ ] T074 [P] [US4] Search for @google/genai imports to identify usage
+- [x] T074 [P] [US4] Search for @google/genai imports to identify usage
       locations
-- [ ] T075 [P] [US4] Search for ink imports to identify UI usage locations
-- [ ] T076 [P] [US4] Search for react imports to identify UI usage locations
-- [ ] T077 [P] [US4] Search for google-auth-library imports to identify backend
+- [x] T075 [P] [US4] Search for ink imports to identify UI usage locations
+- [x] T076 [P] [US4] Search for react imports to identify UI usage locations
+- [x] T077 [P] [US4] Search for google-auth-library imports to identify backend
       usage locations
-- [ ] T078 [P] [US4] Search for undici imports to identify HTTP client usage
+- [x] T078 [P] [US4] Search for undici imports to identify HTTP client usage
       locations
-- [ ] T079 [US4] Categorize @google/genai as logic dependency with usage in
+- [x] T079 [US4] Categorize @google/genai as logic dependency with usage in
       packages/core/src/core/contentGenerator.ts
-- [ ] T080 [US4] Categorize google-auth-library as logic dependency with usage
+- [x] T080 [US4] Categorize google-auth-library as logic dependency with usage
       locations
-- [ ] T081 [US4] Categorize undici as logic dependency with usage in HTTP
+- [x] T081 [US4] Categorize undici as logic dependency with usage in HTTP
       requests
-- [ ] T082 [US4] Categorize ink as UI dependency with usage in
+- [x] T082 [US4] Categorize ink as UI dependency with usage in
       packages/cli/src/ui/\*_/_.tsx
-- [ ] T083 [US4] Categorize react as UI dependency with usage in
+- [x] T083 [US4] Categorize react as UI dependency with usage in
       packages/cli/src/ui/\*_/_.tsx
-- [ ] T084 [US4] Categorize ink-spinner as UI dependency with usage in UI
+- [x] T084 [US4] Categorize ink-spinner as UI dependency with usage in UI
       components
-- [ ] T085 [US4] Categorize highlight.js as UI dependency with usage in code
+- [x] T085 [US4] Categorize highlight.js as UI dependency with usage in code
       display
-- [ ] T086 [US4] Identify shared dependencies using criteria: dependency is
+- [x] T086 [US4] Identify shared dependencies using criteria: dependency is
       imported in both packages/core and packages/cli, or used in both UI
       components and backend logic files, or serves configuration/validation
       purposes used by both layers (e.g., zod, dotenv)
-- [ ] T087 [US4] Document rationale for each dependency categorization
-- [ ] T088 [US4] Create dependencies.md with categorized list in
+- [x] T087 [US4] Document rationale for each dependency categorization
+- [x] T088 [US4] Create dependencies.md with categorized list in
       specs/001-codebase-architecture-analysis/analysis/dependencies.md
-- [ ] T089 [US4] Document usage locations for each dependency in
+- [x] T089 [US4] Document usage locations for each dependency in
       specs/001-codebase-architecture-analysis/analysis/dependencies.md
-- [ ] T103 [US4] Document edge cases discovered during dependency analysis
+- [x] T103 [US4] Document edge cases discovered during dependency analysis
       (dependencies with unclear categorization, version conflicts) in
       specs/001-codebase-architecture-analysis/analysis/edge-cases.md
 
@@ -330,32 +330,32 @@ verify by reviewing dependencies.md and confirming each dependency has category
 
 **Purpose**: Finalize documentation, verify completeness, and create summary
 
-- [ ] T090 [P] Create summary document in
+- [x] T090 [P] Create summary document in
       specs/001-codebase-architecture-analysis/analysis/SUMMARY.md
-- [ ] T091 [P] Verify all backend components have file paths AND
+- [x] T091 [P] Verify all backend components have file paths AND
       function/class/method names in
       specs/001-codebase-architecture-analysis/analysis/backend-components.md
       (each entry must include both file path and function name)
-- [ ] T092 [P] Verify all frontend components have file paths AND
+- [x] T092 [P] Verify all frontend components have file paths AND
       component/function names in
       specs/001-codebase-architecture-analysis/analysis/frontend-components.md
       (each entry must include both file path and component/function name)
-- [ ] T093 [P] Verify data flow is complete from input to output in
+- [x] T093 [P] Verify data flow is complete from input to output in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T094 [P] Verify all dependencies are categorized in
+- [x] T094 [P] Verify all dependencies are categorized in
       specs/001-codebase-architecture-analysis/analysis/dependencies.md
-- [ ] T095 Verify component relationships are documented comprehensively in
+- [x] T095 Verify component relationships are documented comprehensively in
       specs/001-codebase-architecture-analysis/analysis/component-relationships.md
       including all relationship types (backend-to-backend, frontend-to-backend,
       frontend-to-frontend, shared)
-- [ ] T096 Create component map index linking all analysis documents in
+- [x] T096 Create component map index linking all analysis documents in
       specs/001-codebase-architecture-analysis/analysis/README.md
-- [ ] T097 Conduct 5-minute location test: Have developer unfamiliar with
+- [x] T097 Conduct 5-minute location test: Have developer unfamiliar with
       codebase locate 3 random components using documentation and verify
       completion within 5 minutes per component
-- [ ] T098 Consolidate and review all edge cases documented across user story
+- [x] T098 Consolidate and review all edge cases documented across user story
       phases in specs/001-codebase-architecture-analysis/analysis/edge-cases.md
-- [ ] T099 Run quickstart.md validation to ensure analysis methodology is
+- [x] T099 Run quickstart.md validation to ensure analysis methodology is
       documented
 
 ---
