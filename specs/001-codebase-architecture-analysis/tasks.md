@@ -85,50 +85,50 @@ minutes.
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Trace authentication code from entry point to identify API key
+- [x] T013 [US1] Trace authentication code from entry point to identify API key
       processing in packages/core/src/core/apiKeyCredentialStorage.ts
-- [ ] T014 [US1] Document loadApiKey() function in
+- [x] T014 [US1] Document loadApiKey() function in
       packages/core/src/core/apiKeyCredentialStorage.ts
-- [ ] T015 [US1] Document saveApiKey() function in
+- [x] T015 [US1] Document saveApiKey() function in
       packages/core/src/core/apiKeyCredentialStorage.ts
-- [ ] T016 [US1] Trace authentication method selection code in
+- [x] T016 [US1] Trace authentication method selection code in
       packages/cli/src/ui/auth/useAuth.ts
-- [ ] T017 [US1] Document config.refreshAuth() authentication flow in
-      packages/cli/src/config/config.ts
-- [ ] T018 [P] [US1] Identify content generator configuration in
+- [x] T017 [US1] Document config.refreshAuth() authentication flow in
+      packages/core/src/config/config.ts
+- [x] T018 [P] [US1] Identify content generator configuration in
       packages/core/src/core/contentGenerator.ts
-- [ ] T019 [P] [US1] Document createContentGeneratorConfig() function in
+- [x] T019 [P] [US1] Document createContentGeneratorConfig() function in
       packages/core/src/core/contentGenerator.ts
-- [ ] T020 [P] [US1] Document createContentGenerator() function in
+- [x] T020 [P] [US1] Document createContentGenerator() function in
       packages/core/src/core/contentGenerator.ts
-- [ ] T021 [US1] Trace API payload construction in
+- [x] T021 [US1] Trace API payload construction in
       packages/core/src/core/geminiChat.ts
-- [ ] T022 [US1] Document makeApiCallAndProcessStream() payload construction in
+- [x] T022 [US1] Document makeApiCallAndProcessStream() payload construction in
       packages/core/src/core/geminiChat.ts
-- [ ] T023 [US1] Identify HTTP request handling in
+- [x] T023 [US1] Identify HTTP request handling in
       packages/core/src/core/contentGenerator.ts
-- [ ] T024 [US1] Document generateContentStream() HTTP request function in
+- [x] T024 [US1] Document generateContentStream() HTTP request function in
       packages/core/src/core/contentGenerator.ts
-- [ ] T025 [US1] Trace response parsing code in
+- [x] T025 [US1] Trace response parsing code in
       packages/core/src/core/geminiChat.ts
-- [ ] T026 [US1] Document processStreamResponse() response parsing in
+- [x] T026 [US1] Document processStreamResponse() response parsing in
       packages/core/src/core/geminiChat.ts
-- [ ] T027 [US1] Document getResponseText() response extraction in
-      packages/core/src/core/geminiChat.ts
-- [ ] T028 [US1] Identify GeminiClient class and its API methods in
+- [x] T027 [US1] Document getResponseText() response extraction in
+      packages/core/src/utils/partUtils.ts
+- [x] T028 [US1] Identify GeminiClient class and its API methods in
       packages/core/src/core/client.ts
-- [ ] T029 [US1] Document sendMessageStream() method in
+- [x] T029 [US1] Document sendMessageStream() method in
       packages/core/src/core/client.ts
-- [ ] T030 [US1] Document generateContent() method in
+- [x] T030 [US1] Document generateContent() method in
       packages/core/src/core/client.ts
-- [ ] T031 [US1] Create backend-components.md with all identified components in
+- [x] T031 [US1] Create backend-components.md with all identified components in
       specs/001-codebase-architecture-analysis/analysis/backend-components.md
-- [ ] T032 [US1] Document component relationships and dependencies in
+- [x] T032 [US1] Document component relationships and dependencies in
       specs/001-codebase-architecture-analysis/analysis/component-relationships.md
       including: backend-to-backend dependencies, frontend-to-backend
       dependencies, frontend-to-frontend dependencies, and shared component
       relationships
-- [ ] T100 [US1] Document edge cases discovered during backend component
+- [x] T100 [US1] Document edge cases discovered during backend component
       analysis (dual-purpose components, unclear categorization) in
       specs/001-codebase-architecture-analysis/analysis/edge-cases.md
 
@@ -151,46 +151,46 @@ confirming each component's UI responsibility is clearly stated.
 
 ### Implementation for User Story 2
 
-- [ ] T033 [US2] Trace input handling from entry point to InputPrompt component
+- [x] T033 [US2] Trace input handling from entry point to InputPrompt component
       in packages/cli/src/ui/components/InputPrompt.tsx
-- [ ] T034 [US2] Document InputPrompt component input collection logic in
+- [x] T034 [US2] Document InputPrompt component input collection logic in
       packages/cli/src/ui/components/InputPrompt.tsx
-- [ ] T035 [US2] Identify command parsing code in
+- [x] T035 [US2] Identify command parsing code in
       packages/cli/src/ui/hooks/slashCommandProcessor.ts
-- [ ] T036 [US2] Document parseSlashCommand() function in
+- [x] T036 [US2] Document parseSlashCommand() function in
       packages/cli/src/utils/commands.ts
-- [ ] T037 [US2] Document handleSlashCommand() function in
+- [x] T037 [US2] Document handleSlashCommand() function in
       packages/cli/src/ui/hooks/slashCommandProcessor.ts
-- [ ] T038 [US2] Identify @command processing in
+- [x] T038 [US2] Identify @command processing in
       packages/cli/src/ui/hooks/atCommandProcessor.ts
-- [ ] T039 [US2] Document handleAtCommand() function in
+- [x] T039 [US2] Document handleAtCommand() function in
       packages/cli/src/ui/hooks/atCommandProcessor.ts
-- [ ] T040 [P] [US2] Identify output formatting components in
+- [x] T040 [P] [US2] Identify output formatting components in
       packages/cli/src/ui/utils/MarkdownDisplay.tsx
-- [ ] T041 [P] [US2] Document MarkdownDisplay component markdown rendering in
+- [x] T041 [P] [US2] Document MarkdownDisplay component markdown rendering in
       packages/cli/src/ui/utils/MarkdownDisplay.tsx
-- [ ] T042 [P] [US2] Identify ToolResultDisplay component in
+- [x] T042 [P] [US2] Identify ToolResultDisplay component in
       packages/cli/src/ui/components/messages/ToolResultDisplay.tsx
-- [ ] T043 [P] [US2] Document ToolResultDisplay output formatting in
+- [x] T043 [P] [US2] Document ToolResultDisplay output formatting in
       packages/cli/src/ui/components/messages/ToolResultDisplay.tsx
-- [ ] T044 [P] [US2] Identify AnsiOutput component for color coding in
+- [x] T044 [P] [US2] Identify AnsiOutput component for color coding in
       packages/cli/src/ui/components/AnsiOutput.tsx
-- [ ] T045 [P] [US2] Document AnsiOutput color formatting in
+- [x] T045 [P] [US2] Document AnsiOutput color formatting in
       packages/cli/src/ui/components/AnsiOutput.tsx
-- [ ] T046 [US2] Trace CLI navigation and menu components in
+- [x] T046 [US2] Trace CLI navigation and menu components in
       packages/cli/src/ui/AppContainer.tsx
-- [ ] T047 [US2] Document AppContainer main UI structure in
+- [x] T047 [US2] Document AppContainer main UI structure in
       packages/cli/src/ui/AppContainer.tsx
-- [ ] T048 [US2] Identify session management UI in
+- [x] T048 [US2] Identify session management UI in
       packages/cli/src/ui/hooks/useSessionBrowser.ts
-- [ ] T049 [US2] Document session navigation components in
+- [x] T049 [US2] Document session navigation components in
       packages/cli/src/ui/hooks/useSessionBrowser.ts
-- [ ] T050 [US2] Create frontend-components.md with all identified components in
+- [x] T050 [US2] Create frontend-components.md with all identified components in
       specs/001-codebase-architecture-analysis/analysis/frontend-components.md
-- [ ] T051 [US2] Document replaceability assessment for each frontend component
+- [x] T051 [US2] Document replaceability assessment for each frontend component
       in
       specs/001-codebase-architecture-analysis/analysis/frontend-components.md
-- [ ] T101 [US2] Document edge cases discovered during frontend component
+- [x] T101 [US2] Document edge cases discovered during frontend component
       analysis (components serving both UI and logic, embedded logic in UI) in
       specs/001-codebase-architecture-analysis/analysis/edge-cases.md
 
@@ -213,52 +213,52 @@ confirming the flow is complete from input to output.
 
 ### Implementation for User Story 3
 
-- [ ] T052 [US3] Choose sample user input for data flow tracing following
+- [x] T052 [US3] Choose sample user input for data flow tracing following
       criteria: must include @command (file inclusion), must include slash
       command, must include plain text query, should represent typical user
       workflow (e.g., "Explain this code @src/main.ts")
-- [ ] T053 [US3] Document Step 1: Raw input collection in
+- [x] T053 [US3] Document Step 1: Raw input collection in
       packages/cli/src/ui/components/InputPrompt.tsx
-- [ ] T054 [US3] Document input format: string at Step 1 in
+- [x] T054 [US3] Document input format: string at Step 1 in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T055 [US3] Trace Step 2: Command parsing through parseSlashCommand() in
+- [x] T055 [US3] Trace Step 2: Command parsing through parseSlashCommand() in
       packages/cli/src/utils/commands.ts
-- [ ] T056 [US3] Document transformation: string → ParsedCommand at Step 2 in
+- [x] T056 [US3] Document transformation: string → ParsedCommand at Step 2 in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T057 [US3] Trace Step 3: @command processing through handleAtCommand() in
+- [x] T057 [US3] Trace Step 3: @command processing through handleAtCommand() in
       packages/cli/src/ui/hooks/atCommandProcessor.ts
-- [ ] T058 [US3] Document transformation: string → PartListUnion at Step 3 in
+- [x] T058 [US3] Document transformation: string → PartListUnion at Step 3 in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T059 [US3] Trace Step 4: Query preparation through prepareQueryForGemini()
+- [x] T059 [US3] Trace Step 4: Query preparation through prepareQueryForGemini()
       in packages/cli/src/ui/hooks/useGeminiStream.ts
-- [ ] T060 [US3] Document transformation: PartListUnion → PartListUnion
+- [x] T060 [US3] Document transformation: PartListUnion → PartListUnion
       (processed) at Step 4 in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T061 [US3] Trace Step 5: Payload construction through
+- [x] T061 [US3] Trace Step 5: Payload construction through
       makeApiCallAndProcessStream() in packages/core/src/core/geminiChat.ts
-- [ ] T062 [US3] Document transformation: PartListUnion → GenerateContentConfig
+- [x] T062 [US3] Document transformation: PartListUnion → GenerateContentConfig
       at Step 5 in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T063 [US3] Trace Step 6: HTTP request through generateContentStream() in
+- [x] T063 [US3] Trace Step 6: HTTP request through generateContentStream() in
       packages/core/src/core/contentGenerator.ts
-- [ ] T064 [US3] Document transformation: GenerateContentConfig → HTTP Request →
+- [x] T064 [US3] Document transformation: GenerateContentConfig → HTTP Request →
       GenerateContentResponse (stream) at Step 6 in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T065 [US3] Trace Step 7: Response parsing through processStreamResponse()
+- [x] T065 [US3] Trace Step 7: Response parsing through processStreamResponse()
       in packages/core/src/core/geminiChat.ts
-- [ ] T066 [US3] Document transformation: GenerateContentResponse → string
+- [x] T066 [US3] Document transformation: GenerateContentResponse → string
       (text) at Step 7 in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T067 [US3] Trace Step 8: Output formatting through MarkdownDisplay in
+- [x] T067 [US3] Trace Step 8: Output formatting through MarkdownDisplay in
       packages/cli/src/ui/utils/MarkdownDisplay.tsx
-- [ ] T068 [US3] Document transformation: string → FormattedOutput (with colors,
+- [x] T068 [US3] Document transformation: string → FormattedOutput (with colors,
       markdown) at Step 8 in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T069 [US3] Create complete data-flow.md with all transformation steps in
+- [x] T069 [US3] Create complete data-flow.md with all transformation steps in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T070 [US3] Document data structures at each step with TypeScript types in
+- [x] T070 [US3] Document data structures at each step with TypeScript types in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T102 [US3] Document edge cases discovered during data flow analysis
+- [x] T102 [US3] Document edge cases discovered during data flow analysis
       (missing transformation steps, unclear data structures) in
       specs/001-codebase-architecture-analysis/analysis/edge-cases.md
 
