@@ -30,17 +30,17 @@ and documentation of each story.
 
 **Purpose**: Create documentation structure and analysis workspace
 
-- [ ] T001 Create analysis output directory structure in
+- [x] T001 Create analysis output directory structure in
       specs/001-codebase-architecture-analysis/analysis/
-- [ ] T002 [P] Create backend-components.md template in
+- [x] T002 [P] Create backend-components.md template in
       specs/001-codebase-architecture-analysis/analysis/backend-components.md
-- [ ] T003 [P] Create frontend-components.md template in
+- [x] T003 [P] Create frontend-components.md template in
       specs/001-codebase-architecture-analysis/analysis/frontend-components.md
-- [ ] T004 [P] Create data-flow.md template in
+- [x] T004 [P] Create data-flow.md template in
       specs/001-codebase-architecture-analysis/analysis/data-flow.md
-- [ ] T005 [P] Create dependencies.md template in
+- [x] T005 [P] Create dependencies.md template in
       specs/001-codebase-architecture-analysis/analysis/dependencies.md
-- [ ] T006 [P] Create component-relationships.md template in
+- [x] T006 [P] Create component-relationships.md template in
       specs/001-codebase-architecture-analysis/analysis/component-relationships.md
 
 ---
@@ -56,14 +56,14 @@ identified
 **Methodology**: Use "Trace & Tag" approach - follow function calls from entry
 points, tag components as frontend/backend, create dependency graph
 
-- [ ] T007 Identify main CLI entry point by checking package.json bin field
-- [ ] T008 Trace bundle/gemini.js to source file location
-- [ ] T009 Document main() function location in packages/cli/src/gemini.tsx
-- [ ] T010 [P] Identify non-interactive CLI entry point in
+- [x] T007 Identify main CLI entry point by checking package.json bin field
+- [x] T008 Trace bundle/gemini.js to source file location
+- [x] T009 Document main() function location in packages/cli/src/gemini.tsx
+- [x] T010 [P] Identify non-interactive CLI entry point in
       packages/cli/src/nonInteractiveCli.ts
-- [ ] T011 [P] Identify A2A server entry point in
+- [x] T011 [P] Identify A2A server entry point in
       packages/a2a-server/src/index.ts
-- [ ] T012 Create entry-points.md documenting all entry points in
+- [x] T012 Create entry-points.md documenting all entry points in
       specs/001-codebase-architecture-analysis/analysis/entry-points.md
 
 **Checkpoint**: Entry points identified - component tracing can now begin using

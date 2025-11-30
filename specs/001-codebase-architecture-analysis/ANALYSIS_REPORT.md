@@ -6,18 +6,18 @@
 
 ## Findings Summary
 
-| ID  | Category           | Severity | Location(s)                  | Summary                                                                                                                  | Status                                                                                               |
-| --- | ------------------ | -------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| A1  | Coverage           | MEDIUM   | spec.md:FR-011, tasks.md     | FR-011 (document relationships) partially covered but not explicitly in US1 tasks                                        | ✅ FIXED - T032 expanded with relationship mapping details                                           |
-| A2  | Terminology        | LOW      | spec.md, plan.md, tasks.md   | "Trace & Tag" methodology mentioned in plan but not explicitly referenced in tasks                                       | ✅ FIXED - Methodology reference added to Phase 2                                                    |
-| A3  | Underspecification | MEDIUM   | tasks.md:T052                | Sample input selection criteria not specified                                                                            | ✅ FIXED - Criteria added to T052                                                                    |
-| A4  | Coverage           | MEDIUM   | spec.md:SC-006, tasks.md     | SC-006 (5-minute location test) not explicitly validated in tasks                                                        | ✅ FIXED - T097 updated with explicit 5-minute location test                                         |
-| A5  | Ambiguity          | LOW      | spec.md:SC-001               | "100% of authentication-related code" - scope of "related" could be clearer                                              | ✅ FIXED - SC-001 clarified to exclude UI auth dialogs                                               |
-| A6  | Consistency        | LOW      | plan.md:line 111, tasks.md   | Plan states "documentation-only feature" but tasks reference codebase files                                              | ✅ VERIFIED - This is expected behavior, no issue                                                    |
-| A7  | Coverage           | MEDIUM   | spec.md:Edge Cases, tasks.md | Edge cases mentioned in spec but no explicit tasks to document them                                                      | ✅ FIXED - Edge case documentation tasks added to each user story phase (T032a, T051a, T070a, T089a) |
-| A8  | Underspecification | LOW      | tasks.md:T086                | "Shared dependencies" identification criteria not specified                                                              | ✅ FIXED - Criteria added to T086                                                                    |
-| A9  | Coverage           | HIGH     | spec.md:FR-010, tasks.md     | FR-010 requires file paths AND function names - tasks verify paths but function name verification could be more explicit | ✅ FIXED - T091 and T092 updated with explicit function name verification                            |
-| A10 | Constitution       | N/A      | N/A                          | All constitution requirements satisfied - documentation feature exempts code implementation requirements                 | ✅ VERIFIED - No action needed                                                                       |
+| ID  | Category           | Severity | Location(s)                  | Summary                                                                                                                  | Status                                                                                           |
+| --- | ------------------ | -------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| A1  | Coverage           | MEDIUM   | spec.md:FR-011, tasks.md     | FR-011 (document relationships) partially covered but not explicitly in US1 tasks                                        | ✅ FIXED - T032 expanded with relationship mapping details                                       |
+| A2  | Terminology        | LOW      | spec.md, plan.md, tasks.md   | "Trace & Tag" methodology mentioned in plan but not explicitly referenced in tasks                                       | ✅ FIXED - Methodology reference added to Phase 2                                                |
+| A3  | Underspecification | MEDIUM   | tasks.md:T052                | Sample input selection criteria not specified                                                                            | ✅ FIXED - Criteria added to T052                                                                |
+| A4  | Coverage           | MEDIUM   | spec.md:SC-006, tasks.md     | SC-006 (5-minute location test) not explicitly validated in tasks                                                        | ✅ FIXED - T097 updated with explicit 5-minute location test                                     |
+| A5  | Ambiguity          | LOW      | spec.md:SC-001               | "100% of authentication-related code" - scope of "related" could be clearer                                              | ✅ FIXED - SC-001 clarified to exclude UI auth dialogs                                           |
+| A6  | Consistency        | LOW      | plan.md:line 111, tasks.md   | Plan states "documentation-only feature" but tasks reference codebase files                                              | ✅ VERIFIED - This is expected behavior, no issue                                                |
+| A7  | Coverage           | MEDIUM   | spec.md:Edge Cases, tasks.md | Edge cases mentioned in spec but no explicit tasks to document them                                                      | ✅ FIXED - Edge case documentation tasks added to each user story phase (T100, T101, T102, T103) |
+| A8  | Underspecification | LOW      | tasks.md:T086                | "Shared dependencies" identification criteria not specified                                                              | ✅ FIXED - Criteria added to T086                                                                |
+| A9  | Coverage           | HIGH     | spec.md:FR-010, tasks.md     | FR-010 requires file paths AND function names - tasks verify paths but function name verification could be more explicit | ✅ FIXED - T091 and T092 updated with explicit function name verification                        |
+| A10 | Constitution       | N/A      | N/A                          | All constitution requirements satisfied - documentation feature exempts code implementation requirements                 | ✅ VERIFIED - No action needed                                                                   |
 
 ## Coverage Summary Table
 
@@ -61,7 +61,7 @@ All tasks map to requirements or user stories:
 
 - **Total Requirements**: 11 functional requirements (FR-001 through FR-011)
 - **Total Success Criteria**: 8 (SC-001 through SC-008)
-- **Total Tasks**: 99
+- **Total Tasks**: 103 (T001-T099 plus T100-T103 for edge cases)
 - **Coverage %**: 100% (all requirements have associated tasks)
 - **Ambiguity Count**: 2 (low severity)
 - **Duplication Count**: 0
@@ -155,7 +155,7 @@ incomplete.
 6. ✅ **A5 (LOW)**: SC-001 clarified to specify backend authentication logic
    only (excludes UI auth dialogs)
 7. ✅ **A7 (MEDIUM)**: Edge case documentation tasks added to each user story
-   phase (T032a, T051a, T070a, T089a)
+   phase (T100, T101, T102, T103)
 8. ✅ **A8 (LOW)**: T086 updated with shared dependency identification criteria
 
 ### Changes Made
@@ -164,12 +164,12 @@ incomplete.
 
 - Phase 2: Added "Trace & Tag" methodology reference
 - T032: Expanded with relationship mapping details
-- T032a: Added edge case documentation for US1
-- T051a: Added edge case documentation for US2
+- T100: Added edge case documentation for US1
+- T101: Added edge case documentation for US2
 - T052: Added sample input selection criteria
-- T070a: Added edge case documentation for US3
+- T102: Added edge case documentation for US3
 - T086: Added shared dependency identification criteria
-- T089a: Added edge case documentation for US4
+- T103: Added edge case documentation for US4
 - T091: Updated with explicit function name verification
 - T092: Updated with explicit function name verification
 - T095: Expanded with comprehensive relationship verification
