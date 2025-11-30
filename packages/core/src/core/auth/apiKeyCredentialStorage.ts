@@ -7,6 +7,7 @@
 import { HybridTokenStorage } from '../../mcp/token-storage/hybrid-token-storage.js';
 import type { OAuthCredentials } from '../../mcp/token-storage/types.js';
 import { debugLogger } from '../../utils/debugLogger.js';
+import type { ApiKeyData } from '../../contracts/auth.js';
 
 const KEYCHAIN_SERVICE_NAME = 'gemini-cli-api-key';
 const DEFAULT_API_KEY_ENTRY = 'default-api-key';
@@ -15,20 +16,55 @@ const storage = new HybridTokenStorage(KEYCHAIN_SERVICE_NAME);
 
 /**
  * Load cached API key
+ * @returns API key string or null if not found
+ * @deprecated Use loadApiKeyData() for structured data
  */
 export async function loadApiKey(): Promise<string | null> {
+  const data = await loadApiKeyData();
+  return data.apiKey;
+}
+
+/**
+ * Load API key with structured data
+ * @returns Structured API key data
+ */
+export async function loadApiKeyData(): Promise<ApiKeyData> {
   try {
     const credentials = await storage.getCredentials(DEFAULT_API_KEY_ENTRY);
 
     if (credentials?.token?.accessToken) {
-      return credentials.token.accessToken;
+      return {
+        apiKey: credentials.token.accessToken,
+        source: 'storage',
+        timestamp: credentials.updatedAt
+          ? new Date(credentials.updatedAt)
+          : new Date(),
+      };
     }
 
-    return null;
+    // Check environment variable
+    const envKey = process.env['GEMINI_API_KEY'];
+    if (envKey) {
+      return {
+        apiKey: envKey,
+        source: 'environment',
+        timestamp: new Date(),
+      };
+    }
+
+    return {
+      apiKey: null,
+      source: null,
+      timestamp: new Date(),
+    };
   } catch (error: unknown) {
     // Log other errors but don't crash, just return null so user can re-enter key
     debugLogger.error('Failed to load API key from storage:', error);
-    return null;
+    return {
+      apiKey: null,
+      source: null,
+      timestamp: new Date(),
+    };
   }
 }
 

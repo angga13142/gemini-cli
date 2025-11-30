@@ -6,9 +6,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { LoadedSettings } from '../../config/settings.js';
-import { AuthType, type Config } from '@google/gemini-cli-core';
-import { AuthService } from '@google/gemini-cli-core';
+import { AuthType, type Config, AuthService } from '@google/gemini-cli-core';
 import { AuthState } from '../types.js';
+import { createAuthAdapter } from '../../adapters/authAdapter.js';
 
 /**
  * Validate authentication method with settings
@@ -34,8 +34,12 @@ export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
     string | undefined
   >(undefined);
 
-  // Create auth service instance
+  // Create auth service and adapter instances
   const authService = useCallback(() => new AuthService(config), [config]);
+  const authAdapter = useCallback(
+    () => createAuthAdapter(authService()),
+    [authService],
+  );
 
   const onAuthError = useCallback(
     (error: string | null) => {
@@ -110,13 +114,11 @@ export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
           method = 'api-key';
       }
 
-      // Authenticate using auth service
+      // Authenticate using auth adapter (provides clean interface with contract types)
       const apiKey =
         authType === AuthType.USE_GEMINI ? await reloadApiKey() : undefined;
-      const authResult = await service.authenticate({
-        method,
-        apiKey,
-      });
+      const adapter = authAdapter();
+      const authResult = await adapter.authenticate(method, apiKey);
 
       if (authResult.status === 'authenticated') {
         setAuthError(null);
@@ -136,6 +138,7 @@ export const useAuthCommand = (settings: LoadedSettings, config: Config) => {
     onAuthError,
     reloadApiKey,
     authService,
+    authAdapter,
   ]);
 
   return {

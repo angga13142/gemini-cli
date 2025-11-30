@@ -42,6 +42,18 @@ export interface AuthRequest {
 }
 
 /**
+ * API key data structure
+ */
+export interface ApiKeyData {
+  /** The API key value, or null if not found */
+  apiKey: string | null;
+  /** Source of the API key */
+  source: 'storage' | 'environment' | null;
+  /** Timestamp when the key was loaded */
+  timestamp?: Date;
+}
+
+/**
  * Authentication service interface
  */
 export interface AuthService {

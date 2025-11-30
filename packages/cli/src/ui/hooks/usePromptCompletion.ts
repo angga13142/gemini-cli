@@ -10,6 +10,7 @@ import { debugLogger, getResponseText } from '@google/gemini-cli-core';
 import type { Content } from '@google/genai';
 import type { TextBuffer } from '../components/shared/text-buffer.js';
 import { isSlashCommand } from '../utils/commandUtils.js';
+import { createApiAdapter } from '../../adapters/apiAdapter.js';
 
 export const PROMPT_COMPLETION_MIN_LENGTH = 5;
 export const PROMPT_COMPLETION_DEBOUNCE_MS = 250;
@@ -106,11 +107,9 @@ export function usePromptCompletion({
         },
       ];
 
-      // Use ApiService for API calls instead of direct GeminiClient access
-      // ApiServiceImpl extends ApiService and provides generateContent method
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const apiServiceImpl = apiService as any; // Type assertion needed for generateContent
-      const response = await apiServiceImpl.generateContent(
+      // Use ApiAdapter for API calls - provides clean interface with contract types
+      const apiAdapter = createApiAdapter(apiService);
+      const response = await apiAdapter.generateContent(
         { model: 'prompt-completion' },
         contents,
         signal,

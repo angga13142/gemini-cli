@@ -33,6 +33,13 @@ import { WebSearchTool } from '../tools/web-search.js';
 import { GeminiClient } from '../core/client.js';
 import type { ApiService } from '../contracts/api.js';
 import { createApiService } from '../core/api/apiService.js';
+import type { AuthResult } from '../contracts/auth.js';
+import {
+  createBackendError,
+  ErrorType,
+  ErrorCode,
+} from '../contracts/errors.js';
+import { getErrorMessage } from '../utils/errors.js';
 import { BaseLlmClient } from '../core/baseLlmClient.js';
 import type { HookDefinition, HookEventName } from '../hooks/types.js';
 import { FileDiscoveryService } from '../services/fileDiscoveryService.js';
@@ -657,59 +664,95 @@ export class Config {
     return this.contentGenerator;
   }
 
-  async refreshAuth(authMethod: AuthType) {
-    // Vertex and Genai have incompatible encryption and sending history with
-    // thoughtSignature from Genai to Vertex will fail, we need to strip them
-    if (
-      this.contentGeneratorConfig?.authType === AuthType.USE_GEMINI &&
-      authMethod !== AuthType.USE_GEMINI
-    ) {
-      // Restore the conversation history to the new client
-      this.geminiClient.stripThoughtsFromHistory();
-    }
+  /**
+   * Refresh authentication (legacy method - returns void for backward compatibility)
+   * @deprecated Use refreshAuthWithResult() for structured return type
+   */
+  async refreshAuth(authMethod: AuthType): Promise<void> {
+    await this.refreshAuthWithResult(authMethod);
+  }
 
-    const newContentGeneratorConfig = await createContentGeneratorConfig(
-      this,
-      authMethod,
-    );
-    this.contentGenerator = await createContentGenerator(
-      newContentGeneratorConfig,
-      this,
-      this.getSessionId(),
-    );
-    // Only assign to instance properties after successful initialization
-    this.contentGeneratorConfig = newContentGeneratorConfig;
+  /**
+   * Refresh authentication and return structured result
+   */
+  async refreshAuthWithResult(authMethod: AuthType): Promise<AuthResult> {
+    try {
+      // Vertex and Genai have incompatible encryption and sending history with
+      // thoughtSignature from Genai to Vertex will fail, we need to strip them
+      if (
+        this.contentGeneratorConfig?.authType === AuthType.USE_GEMINI &&
+        authMethod !== AuthType.USE_GEMINI
+      ) {
+        // Restore the conversation history to the new client
+        this.geminiClient.stripThoughtsFromHistory();
+      }
 
-    // Initialize BaseLlmClient now that the ContentGenerator is available
-    this.baseLlmClient = new BaseLlmClient(this.contentGenerator, this);
+      const newContentGeneratorConfig = await createContentGeneratorConfig(
+        this,
+        authMethod,
+      );
+      this.contentGenerator = await createContentGenerator(
+        newContentGeneratorConfig,
+        this,
+        this.getSessionId(),
+      );
+      // Only assign to instance properties after successful initialization
+      this.contentGeneratorConfig = newContentGeneratorConfig;
 
-    const previewFeatures = this.getPreviewFeatures();
+      // Initialize BaseLlmClient now that the ContentGenerator is available
+      this.baseLlmClient = new BaseLlmClient(this.contentGenerator, this);
 
-    const codeAssistServer = getCodeAssistServer(this);
-    if (codeAssistServer) {
-      this.experimentsPromise = getExperiments(codeAssistServer)
-        .then((experiments) => {
-          this.setExperiments(experiments);
+      const previewFeatures = this.getPreviewFeatures();
 
-          // If preview features have not been set and the user authenticated through Google, we enable preview based on remote config only if it's true
-          if (previewFeatures === undefined) {
-            const remotePreviewFeatures =
-              experiments.flags[ExperimentFlags.ENABLE_PREVIEW]?.boolValue;
-            if (remotePreviewFeatures === true) {
-              this.setPreviewFeatures(remotePreviewFeatures);
+      const codeAssistServer = getCodeAssistServer(this);
+      if (codeAssistServer) {
+        this.experimentsPromise = getExperiments(codeAssistServer)
+          .then((experiments) => {
+            this.setExperiments(experiments);
+
+            // If preview features have not been set and the user authenticated through Google, we enable preview based on remote config only if it's true
+            if (previewFeatures === undefined) {
+              const remotePreviewFeatures =
+                experiments.flags[ExperimentFlags.ENABLE_PREVIEW]?.boolValue;
+              if (remotePreviewFeatures === true) {
+                this.setPreviewFeatures(remotePreviewFeatures);
+              }
             }
-          }
-        })
-        .catch((e) => {
-          debugLogger.error('Failed to fetch experiments', e);
-        });
-    } else {
-      this.experiments = undefined;
-      this.experimentsPromise = undefined;
-    }
+          })
+          .catch((e) => {
+            debugLogger.error('Failed to fetch experiments', e);
+          });
+      } else {
+        this.experiments = undefined;
+        this.experimentsPromise = undefined;
+      }
 
-    // Reset the session flag since we're explicitly changing auth and using default model
-    this.inFallbackMode = false;
+      // Reset the session flag since we're explicitly changing auth and using default model
+      this.inFallbackMode = false;
+
+      // Map AuthType to method string
+      const method =
+        authMethod === AuthType.USE_GEMINI
+          ? 'api-key'
+          : authMethod === AuthType.LOGIN_WITH_GOOGLE
+            ? 'oauth'
+            : 'service-account';
+
+      return {
+        status: 'authenticated',
+        method,
+      };
+    } catch (error) {
+      return {
+        status: 'failed',
+        error: createBackendError(
+          ErrorType.AUTH_ERROR,
+          `Failed to refresh authentication: ${getErrorMessage(error)}`,
+          ErrorCode.AUTH_EXPIRED,
+          { originalError: error },
+        ),
+      };
+    }
   }
 
   async getExperimentsAsync(): Promise<Experiments | undefined> {

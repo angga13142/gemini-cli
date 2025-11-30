@@ -219,6 +219,7 @@ through the full data flow pipeline. They are executed directly by
     ```
 
   - Each chunk contains partial response data
+
 - **File Path**:
   - Backend Service: `packages/core/src/core/api/apiService.ts`
   - Internal: `packages/core/src/core/contentGenerator.ts`

@@ -93,6 +93,9 @@ export {
 export { ApiServiceImpl, createApiService } from './core/api/apiService.js';
 // ApiService type is already exported from contracts
 
+// Export auth storage functions
+export { loadApiKeyData } from './core/auth/apiKeyCredentialStorage.js';
+
 // Export utilities
 export * from './utils/paths.js';
 export * from './utils/schemaValidator.js';

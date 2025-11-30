@@ -16,8 +16,8 @@ import type {
   ThoughtSummary,
   ToolCallRequestInfo,
   GeminiErrorEventValue,
-  ApiServiceImpl,
 } from '@google/gemini-cli-core';
+import { createApiAdapter } from '../../adapters/apiAdapter.js';
 import {
   GeminiEventType as ServerGeminiEventType,
   getErrorMessage,
@@ -951,10 +951,10 @@ export const useGeminiStream = (
             lastPromptIdRef.current = prompt_id!;
 
             try {
-              // Use ApiService for API calls instead of direct GeminiClient access
+              // Use ApiAdapter for API calls - provides clean interface with contract types
               const apiService = config.getApiService();
-              const apiServiceImpl = apiService as ApiServiceImpl;
-              const stream = apiServiceImpl.sendMessageStreamWithEvents(
+              const apiAdapter = createApiAdapter(apiService);
+              const stream = apiAdapter.sendMessageStreamWithEvents(
                 queryToSend,
                 abortSignal,
                 prompt_id!,

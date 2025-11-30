@@ -20,6 +20,7 @@ import type {
   AuthResult,
   AuthRequest,
   AuthService as IAuthService,
+  ApiKeyData,
 } from '../../contracts/auth.js';
 import {
   createBackendError,
@@ -108,11 +109,21 @@ export class AuthService implements IAuthService {
 
   /**
    * Load API key from storage or environment
+   * @returns API key string
    */
   async loadApiKey(): Promise<string> {
     const storedKey = (await loadApiKey()) ?? '';
     const envKey = process.env['GEMINI_API_KEY'] ?? '';
     return envKey || storedKey;
+  }
+
+  /**
+   * Load API key with structured data
+   * @returns Structured API key data
+   */
+  async loadApiKeyData(): Promise<ApiKeyData> {
+    const { loadApiKeyData } = await import('./apiKeyCredentialStorage.js');
+    return await loadApiKeyData();
   }
 
   /**
@@ -218,23 +229,8 @@ export class AuthService implements IAuthService {
     const currentAuthType =
       this.config.getContentGeneratorConfig()?.authType || AuthType.USE_GEMINI;
 
-    try {
-      await this.config.refreshAuth(currentAuthType);
-      return {
-        status: 'authenticated',
-        method: this.mapAuthTypeToMethod(currentAuthType),
-      };
-    } catch (error) {
-      return {
-        status: 'failed',
-        error: createBackendError(
-          ErrorType.AUTH_ERROR,
-          `Failed to refresh authentication: ${getErrorMessage(error)}`,
-          ErrorCode.AUTH_EXPIRED,
-          { originalError: error },
-        ),
-      };
-    }
+    // Use refreshAuthWithResult for structured return type
+    return await this.config.refreshAuthWithResult(currentAuthType);
   }
 
   /**
@@ -256,25 +252,6 @@ export class AuthService implements IAuthService {
       return contentGenerator !== null && contentGenerator !== undefined;
     } catch {
       return false;
-    }
-  }
-
-  /**
-   * Map AuthType to AuthRequest method
-   */
-  private mapAuthTypeToMethod(
-    authType: AuthType,
-  ): 'api-key' | 'oauth' | 'service-account' {
-    switch (authType) {
-      case AuthType.USE_GEMINI:
-        return 'api-key';
-      case AuthType.LOGIN_WITH_GOOGLE:
-        return 'oauth';
-      case AuthType.COMPUTE_ADC:
-      case AuthType.USE_VERTEX_AI:
-        return 'service-account';
-      default:
-        return 'api-key';
     }
   }
 }
