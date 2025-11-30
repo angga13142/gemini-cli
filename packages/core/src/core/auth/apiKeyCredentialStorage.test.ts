@@ -15,7 +15,7 @@ const getCredentialsMock = vi.hoisted(() => vi.fn());
 const setCredentialsMock = vi.hoisted(() => vi.fn());
 const deleteCredentialsMock = vi.hoisted(() => vi.fn());
 
-vi.mock('../mcp/token-storage/hybrid-token-storage.js', () => ({
+vi.mock('../../mcp/token-storage/hybrid-token-storage.js', () => ({
   HybridTokenStorage: vi.fn().mockImplementation(() => ({
     getCredentials: getCredentialsMock,
     setCredentials: setCredentialsMock,

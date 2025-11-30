@@ -15,7 +15,7 @@ import { createCodeAssistContentGenerator } from '../code_assist/codeAssist.js';
 import { GoogleGenAI } from '@google/genai';
 import type { Config } from '../config/config.js';
 import { LoggingContentGenerator } from './loggingContentGenerator.js';
-import { loadApiKey } from './apiKeyCredentialStorage.js';
+import { loadApiKey } from './auth/apiKeyCredentialStorage.js';
 import { FakeContentGenerator } from './fakeContentGenerator.js';
 import { RecordingContentGenerator } from './recordingContentGenerator.js';
 

@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HybridTokenStorage } from '../mcp/token-storage/hybrid-token-storage.js';
-import type { OAuthCredentials } from '../mcp/token-storage/types.js';
-import { debugLogger } from '../utils/debugLogger.js';
+import { HybridTokenStorage } from '../../mcp/token-storage/hybrid-token-storage.js';
+import type { OAuthCredentials } from '../../mcp/token-storage/types.js';
+import { debugLogger } from '../../utils/debugLogger.js';
 
 const KEYCHAIN_SERVICE_NAME = 'gemini-cli-api-key';
 const DEFAULT_API_KEY_ENTRY = 'default-api-key';

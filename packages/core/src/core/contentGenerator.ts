@@ -15,7 +15,7 @@ import type {
 import { GoogleGenAI } from '@google/genai';
 import { createCodeAssistContentGenerator } from '../code_assist/codeAssist.js';
 import type { Config } from '../config/config.js';
-import { loadApiKey } from './apiKeyCredentialStorage.js';
+import { loadApiKey } from './auth/apiKeyCredentialStorage.js';
 
 import type { UserTierId } from '../code_assist/types.js';
 import { LoggingContentGenerator } from './loggingContentGenerator.js';
