@@ -16,7 +16,51 @@ interface ErrorReportData {
 }
 
 /**
+ * Cleans up old error report files in the reporting directory.
+ * Removes files older than 7 days to prevent /tmp/ from filling up.
+ * @param reportingDir The directory containing error reports.
+ * @param maxAgeDays Maximum age in days for error reports (default: 7).
+ */
+export async function cleanupOldErrorReports(
+  reportingDir = os.tmpdir(),
+  maxAgeDays = 7,
+): Promise<void> {
+  try {
+    const files = await fs.readdir(reportingDir);
+    const now = Date.now();
+    const maxAgeMs = maxAgeDays * 24 * 60 * 60 * 1000;
+    let cleanedCount = 0;
+
+    for (const file of files) {
+      if (file.startsWith('gemini-client-error-') && file.endsWith('.json')) {
+        const filePath = path.join(reportingDir, file);
+        try {
+          const stats = await fs.stat(filePath);
+          const age = now - stats.mtimeMs;
+          if (age > maxAgeMs) {
+            await fs.unlink(filePath);
+            cleanedCount++;
+          }
+        } catch (_statError) {
+          // File might have been deleted already, ignore
+        }
+      }
+    }
+
+    if (cleanedCount > 0) {
+      // Only log if we actually cleaned something (avoid noise)
+      console.error(
+        `Cleaned up ${cleanedCount} old error report file(s) from ${reportingDir}`,
+      );
+    }
+  } catch (_cleanupError) {
+    // Silently fail cleanup - don't let cleanup errors interfere with error reporting
+  }
+}
+
+/**
  * Generates an error report, writes it to a temporary file, and logs information to console.error.
+ * Automatically cleans up old error reports before writing new ones.
  * @param error The error object.
  * @param context The relevant context (e.g., chat history, request contents).
  * @param type A string to identify the type of error (e.g., 'startChat', 'generateJson-api').
@@ -29,6 +73,10 @@ export async function reportError(
   type = 'general',
   reportingDir = os.tmpdir(), // for testing
 ): Promise<void> {
+  // Clean up old error reports periodically (every 100th call to avoid overhead)
+  if (Math.random() < 0.01) {
+    await cleanupOldErrorReports(reportingDir);
+  }
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const reportFileName = `gemini-client-error-${type}-${timestamp}.json`;
   const reportPath = path.join(reportingDir, reportFileName);
