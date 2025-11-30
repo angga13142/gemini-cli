@@ -28,11 +28,11 @@ implementation and testing of each story.
 
 **Purpose**: Project initialization and contract structure
 
-- [ ] T001 Create contracts directory structure in packages/core/src/contracts/
-- [ ] T002 [P] Create adapters directory structure in packages/cli/src/adapters/
-- [ ] T003 [P] Document current backend component locations in
+- [x] T001 Create contracts directory structure in packages/core/src/contracts/
+- [x] T002 [P] Create adapters directory structure in packages/cli/src/adapters/
+- [x] T003 [P] Document current backend component locations in
       packages/core/src/core/
-- [ ] T004 [P] Document current frontend component locations in
+- [x] T004 [P] Document current frontend component locations in
       packages/cli/src/ui/
 
 ---
