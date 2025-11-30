@@ -31,6 +31,8 @@ import { WebFetchTool } from '../tools/web-fetch.js';
 import { MemoryTool, setGeminiMdFilename } from '../tools/memoryTool.js';
 import { WebSearchTool } from '../tools/web-search.js';
 import { GeminiClient } from '../core/client.js';
+import type { ApiService } from '../contracts/api.js';
+import { createApiService } from '../core/api/apiService.js';
 import { BaseLlmClient } from '../core/baseLlmClient.js';
 import type { HookDefinition, HookEventName } from '../hooks/types.js';
 import { FileDiscoveryService } from '../services/fileDiscoveryService.js';
@@ -1034,6 +1036,10 @@ export class Config {
 
   getGeminiClient(): GeminiClient {
     return this.geminiClient;
+  }
+
+  getApiService(): ApiService {
+    return createApiService(this.geminiClient);
   }
 
   /**

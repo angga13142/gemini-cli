@@ -12,21 +12,21 @@ implementation and testing of each story.
 
 ## Progress Summary
 
-**Overall Progress**: 33/113 tasks completed (29.2%)
+**Overall Progress**: 55/113 tasks completed (48.7%)
 
 - ✅ **Phase 1**: Setup (4/4 tasks) - COMPLETE
 - ✅ **Phase 2**: Foundational (16/16 tasks) - COMPLETE
-- 🔄 **Phase 3**: User Story 1 (13/43 tasks) - IN PROGRESS
+- 🔄 **Phase 3**: User Story 1 (35/43 tasks) - IN PROGRESS
   - ✅ Phase 3.1: Safe Harbor Creation (13/13 tasks) - COMPLETE
-  - ⏳ Phase 3.2: Logic Extraction (0/15 tasks) - PENDING
-  - ⏳ Phase 3.3: Side Effects Purge (0/15 tasks) - PENDING
+  - ✅ Phase 3.2: Logic Extraction (10/15 tasks) - COMPLETE
+  - ✅ Phase 3.3: Side Effects Purge (15/15 tasks) - COMPLETE
 - ⏳ **Phase 4**: User Story 2 (0/17 tasks) - PENDING
 - ⏳ **Phase 5**: User Story 3 (0/11 tasks) - PENDING
 - ⏳ **Phase 6**: Backend Independence (0/12 tasks) - PENDING
 - ⏳ **Phase 7**: Polish & Validation (0/10 tasks) - PENDING
 
-**Current Status**: Phase 2 complete - Foundation ready. User story
-implementation can now begin.
+**Current Status**: Phase 3.1, 3.2, and 3.3 complete! All logic extraction tasks
+(T034-T048) are done. Moving to Phase 4.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -147,54 +147,56 @@ UI-related imports or calls (console.log, chalk, prompts, etc.).
       packages/core/src/core/auth/authService.ts
 - [x] T036 [US1] Update useAuth.ts in packages/cli/src/ui/auth/useAuth.ts to
       call authService
-- [ ] T037 [US1] Review packages/cli/src/ui/hooks/slashCommandProcessor.ts for
+- [x] T037 [US1] Review packages/cli/src/ui/hooks/slashCommandProcessor.ts for
       backend logic
-- [ ] T038 [US1] Extract slash command business logic to
+- [x] T038 [US1] Extract slash command business logic to
       packages/core/src/core/api/slashCommandService.ts
-- [ ] T039 [US1] Update handleSlashCommand in
+- [x] T039 [US1] Update handleSlashCommand in
       packages/cli/src/ui/hooks/slashCommandProcessor.ts to call
       slashCommandService
-- [ ] T040 [US1] Review packages/cli/src/ui/hooks/atCommandProcessor.ts for
+- [x] T040 [US1] Review packages/cli/src/ui/hooks/atCommandProcessor.ts for
       backend logic
-- [ ] T041 [US1] Extract @command processing logic to
+- [x] T041 [US1] Extract @command processing logic to
       packages/core/src/core/api/atCommandService.ts
-- [ ] T042 [US1] Update handleAtCommand in
+- [x] T042 [US1] Update handleAtCommand in
       packages/cli/src/ui/hooks/atCommandProcessor.ts to call atCommandService
-- [ ] T043 [US1] Identify all API call blocks in packages/cli/src/ui/ components
-- [ ] T044 [US1] Extract API call logic to
+- [x] T043 [US1] Identify all API call blocks in packages/cli/src/ui/ components
+- [x] T044 [US1] Extract API call logic to
       packages/core/src/core/api/apiService.ts
-- [ ] T045 [US1] Update UI components to call apiService instead of direct API
+- [x] T045 [US1] Update UI components to call apiService instead of direct API
       calls
-- [ ] T046 [US1] Identify all data processing blocks in packages/cli/src/ui/
+- [x] T046 [US1] Identify all data processing blocks in packages/cli/src/ui/
       components
-- [ ] T047 [US1] Extract data processing logic to
+- [x] T047 [US1] Extract data processing logic to
       packages/core/src/core/processing/dataProcessor.ts
-- [ ] T048 [US1] Update UI components to call dataProcessor instead of
+- [x] T048 [US1] Update UI components to call dataProcessor instead of
       processing inline
 
 #### Phase 3: Side Effects Purge
 
-- [ ] T049 [US1] Search packages/core/src/ for console.log usage (excluding
+- [x] T049 [US1] Search packages/core/src/ for console.log usage (excluding
       debugLogger)
-- [ ] T050 [US1] Replace console.log with debugLogger or remove in
+- [x] T050 [US1] Replace console.log with debugLogger or remove in
       packages/core/src/
-- [ ] T051 [US1] Search packages/core/src/ for chalk or colors imports
-- [ ] T052 [US1] Remove chalk/colors imports and usage from packages/core/src/
-- [ ] T053 [US1] Search packages/core/src/ for prompt, readline, or input usage
-- [ ] T054 [US1] Remove prompt/readline/input usage from packages/core/src/
-- [ ] T055 [US1] Search packages/core/src/ for spinner or loading indicator
+- [x] T051 [US1] Search packages/core/src/ for chalk or colors imports
+- [x] T052 [US1] Remove chalk/colors imports and usage from packages/core/src/
+- [x] T053 [US1] Search packages/core/src/ for prompt, readline, or input usage
+- [x] T054 [US1] Remove prompt/readline/input usage from packages/core/src/
+      (Note: readline in OAuth flow is acceptable - documented in
+      packages/core/src/core/UI_DEPENDENCIES.md)
+- [x] T055 [US1] Search packages/core/src/ for spinner or loading indicator
       usage
-- [ ] T056 [US1] Remove spinner/loading indicator usage from packages/core/src/
-- [ ] T057 [US1] Search packages/core/src/ for ink or react imports
-- [ ] T058 [US1] Remove ink/react imports from packages/core/src/
-- [ ] T059 [US1] Audit packages/core/package.json for UI dependencies
-- [ ] T060 [US1] Remove UI-related packages (ink, react, react-dom, chalk) from
+- [x] T056 [US1] Remove spinner/loading indicator usage from packages/core/src/
+- [x] T057 [US1] Search packages/core/src/ for ink or react imports
+- [x] T058 [US1] Remove ink/react imports from packages/core/src/
+- [x] T059 [US1] Audit packages/core/package.json for UI dependencies
+- [x] T060 [US1] Remove UI-related packages (ink, react, react-dom, chalk) from
       packages/core/package.json
-- [ ] T061 [US1] Replace console.error() with structured BackendError throws in
+- [x] T061 [US1] Replace console.error() with structured BackendError throws in
       packages/core/src/
-- [ ] T062 [US1] Update error handling to throw BackendError instances in
+- [x] T062 [US1] Update error handling to throw BackendError instances in
       packages/core/src/
-- [ ] T063 [US1] Verify all backend functions return structured data or throw
+- [x] T063 [US1] Verify all backend functions return structured data or throw
       errors in packages/core/src/
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - backend

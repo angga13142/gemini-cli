@@ -12,9 +12,13 @@ import type {
   Config,
   ConversationRecord,
   ResumedSessionData,
+  UIHistoryItem,
+} from '@google/gemini-cli-core';
+import {
+  convertSessionToHistoryFormats as convertSessionToHistoryFormatsBackend,
+  partListUnionToString,
 } from '@google/gemini-cli-core';
 import type { Part } from '@google/genai';
-import { partListUnionToString } from '@google/gemini-cli-core';
 import type { SessionInfo } from '../../utils/sessionUtils.js';
 import { MessageType, ToolCallStatus } from '../types.js';
 
@@ -70,11 +74,16 @@ export const useSessionBrowser = (
 
           // We've loaded it; tell the UI about it.
           setIsSessionBrowserOpen(false);
-          const historyData = convertSessionToHistoryFormats(
+          // Use backend service for data transformation
+          const historyData = convertSessionToHistoryFormatsBackend(
             conversation.messages,
           );
-          onLoadHistory(
+          // Adapt backend format to frontend format
+          const adaptedUiHistory = adaptBackendHistoryToFrontend(
             historyData.uiHistory,
+          );
+          onLoadHistory(
+            adaptedUiHistory,
             historyData.clientHistory,
             resumedSessionData,
           );
@@ -113,7 +122,40 @@ export const useSessionBrowser = (
 };
 
 /**
+ * Adapts backend UI history format to frontend format.
+ * Converts tool status strings to ToolCallStatus enum values.
+ */
+function adaptBackendHistoryToFrontend(
+  backendHistory: UIHistoryItem[],
+): HistoryItemWithoutId[] {
+  return backendHistory.map((item) => {
+    if (item.type === 'tool_group' && item.tools) {
+      return {
+        type: 'tool_group' as const,
+        tools: item.tools.map((tool) => ({
+          callId: tool.callId,
+          name: tool.name,
+          description: tool.description,
+          renderOutputAsMarkdown: tool.renderOutputAsMarkdown,
+          status:
+            tool.status === 'success'
+              ? ToolCallStatus.Success
+              : ToolCallStatus.Error,
+          resultDisplay: tool.resultDisplay,
+          confirmationDetails: tool.confirmationDetails,
+        })),
+      };
+    }
+    // For non-tool_group items, the types are compatible
+    return item as HistoryItemWithoutId;
+  }) as HistoryItemWithoutId[];
+}
+
+/**
  * Converts session/conversation data into UI history and Gemini client history formats.
+ *
+ * @deprecated This function is kept for backward compatibility but should use
+ * the backend service convertSessionToHistoryFormats from @google/gemini-cli-core instead.
  */
 export function convertSessionToHistoryFormats(
   messages: ConversationRecord['messages'],

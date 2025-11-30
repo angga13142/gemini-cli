@@ -8,6 +8,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import type { Content } from '@google/genai';
+import { debugLogger } from './debugLogger.js';
 
 interface ErrorReportData {
   error: { message: string; stack?: string } | { message: string };
@@ -49,7 +50,8 @@ export async function cleanupOldErrorReports(
 
     if (cleanedCount > 0) {
       // Only log if we actually cleaned something (avoid noise)
-      console.error(
+      // Use debugLogger for cleanup notifications (acceptable in backend)
+      debugLogger.log(
         `Cleaned up ${cleanedCount} old error report file(s) from ${reportingDir}`,
       );
     }
@@ -61,6 +63,11 @@ export async function cleanupOldErrorReports(
 /**
  * Generates an error report, writes it to a temporary file, and logs information to console.error.
  * Automatically cleans up old error reports before writing new ones.
+ *
+ * NOTE: This function uses console.error as a last-resort fallback when error reporting
+ * itself fails. This is acceptable because errorReporting is a utility that must be able
+ * to log even when all other mechanisms fail.
+ *
  * @param error The error object.
  * @param context The relevant context (e.g., chat history, request contents).
  * @param type A string to identify the type of error (e.g., 'startChat', 'generateJson-api').

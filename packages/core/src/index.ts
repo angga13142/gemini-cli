@@ -65,6 +65,33 @@ export * from './core/auth/apiKeyCredentialStorage.js';
 export { AuthService } from './core/auth/authService.js';
 // Re-export AuthService type interface for contracts
 export type { IAuthService as AuthServiceInterface } from './contracts/index.js';
+// Export slash command service
+export {
+  parseSlashCommand,
+  logSlashCommandExecution,
+  type ParsedSlashCommand,
+  type SlashCommandExecutionResult,
+  type CommandForParsing,
+} from './core/api/slashCommandService.js';
+// Export @command service
+export {
+  parseAllAtCommands,
+  resolveAtCommandPaths,
+  type ParsedAtCommand,
+  type AtCommandPart,
+  type ResolvedAtCommandPaths,
+  type ResolvedPath,
+} from './core/api/atCommandService.js';
+// Export data processor service
+export {
+  convertSessionToHistoryFormats,
+  type ConvertedHistoryFormats,
+  type UIHistoryItem,
+  type ClientHistoryItem,
+} from './core/processing/dataProcessor.js';
+// Export API service
+export { ApiServiceImpl, createApiService } from './core/api/apiService.js';
+// ApiService type is already exported from contracts
 
 // Export utilities
 export * from './utils/paths.js';

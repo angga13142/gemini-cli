@@ -66,7 +66,7 @@ export function usePromptCompletion({
 
   const generatePromptSuggestions = useCallback(async () => {
     const trimmedText = buffer.text.trim();
-    const geminiClient = config?.getGeminiClient();
+    const apiService = config?.getApiService();
 
     if (trimmedText === lastRequestedTextRef.current) {
       return;
@@ -78,7 +78,7 @@ export function usePromptCompletion({
 
     if (
       trimmedText.length < PROMPT_COMPLETION_MIN_LENGTH ||
-      !geminiClient ||
+      !apiService ||
       isSlashCommand(trimmedText) ||
       trimmedText.includes('@') ||
       !isPromptCompletionEnabled
@@ -106,7 +106,11 @@ export function usePromptCompletion({
         },
       ];
 
-      const response = await geminiClient.generateContent(
+      // Use ApiService for API calls instead of direct GeminiClient access
+      // ApiServiceImpl extends ApiService and provides generateContent method
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const apiServiceImpl = apiService as any; // Type assertion needed for generateContent
+      const response = await apiServiceImpl.generateContent(
         { model: 'prompt-completion' },
         contents,
         signal,

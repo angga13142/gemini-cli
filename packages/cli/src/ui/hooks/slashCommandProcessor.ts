@@ -16,9 +16,8 @@ import type {
 import {
   GitService,
   Logger,
-  logSlashCommand,
-  makeSlashCommandEvent,
-  SlashCommandStatus,
+  logSlashCommandExecution,
+  parseSlashCommand as parseSlashCommandBackend,
   ToolConfirmationOutcome,
   Storage,
   IdeClient,
@@ -38,7 +37,7 @@ import { CommandService } from '../../services/CommandService.js';
 import { BuiltinCommandLoader } from '../../services/BuiltinCommandLoader.js';
 import { FileCommandLoader } from '../../services/FileCommandLoader.js';
 import { McpPromptLoader } from '../../services/McpPromptLoader.js';
-import { parseSlashCommand } from '../../utils/commands.js';
+// parseSlashCommand now imported from backend service
 import {
   type ExtensionUpdateAction,
   type ExtensionUpdateStatus,
@@ -337,16 +336,16 @@ export const useSlashCommandProcessor = (
       }
 
       let hasError = false;
-      const {
-        commandToExecute,
-        args,
-        canonicalPath: resolvedCommandPath,
-      } = parseSlashCommand(trimmed, commands);
-
-      const subcommand =
-        resolvedCommandPath.length > 1
-          ? resolvedCommandPath.slice(1).join(' ')
-          : undefined;
+      // Use backend service for parsing
+      const parseResult = parseSlashCommandBackend(trimmed, commands);
+      // Type assertion: parseResult.commandToExecute is SlashCommand | undefined
+      // because commands is SlashCommand[]
+      const commandToExecute = parseResult.commandToExecute as
+        | SlashCommand
+        | undefined;
+      const args = parseResult.args;
+      const resolvedCommandPath = parseResult.canonicalPath;
+      const subcommand = parseResult.subcommand;
 
       try {
         if (commandToExecute) {
@@ -557,14 +556,18 @@ export const useSlashCommandProcessor = (
         return { type: 'handled' };
       } catch (e: unknown) {
         hasError = true;
-        if (config) {
-          const event = makeSlashCommandEvent({
-            command: resolvedCommandPath[0],
-            subcommand,
-            status: SlashCommandStatus.ERROR,
-            extension_id: commandToExecute?.extensionId,
-          });
-          logSlashCommand(config, event);
+        if (config && resolvedCommandPath[0]) {
+          // Use backend service for logging
+          logSlashCommandExecution(
+            config,
+            {
+              status: 'error',
+              commandName: resolvedCommandPath[0],
+              subcommand,
+              error: e instanceof Error ? e.message : String(e),
+            },
+            commandToExecute?.extensionId,
+          );
         }
         addItem(
           {
@@ -576,13 +579,16 @@ export const useSlashCommandProcessor = (
         return { type: 'handled' };
       } finally {
         if (config && resolvedCommandPath[0] && !hasError) {
-          const event = makeSlashCommandEvent({
-            command: resolvedCommandPath[0],
-            subcommand,
-            status: SlashCommandStatus.SUCCESS,
-            extension_id: commandToExecute?.extensionId,
-          });
-          logSlashCommand(config, event);
+          // Use backend service for logging
+          logSlashCommandExecution(
+            config,
+            {
+              status: 'success',
+              commandName: resolvedCommandPath[0],
+              subcommand,
+            },
+            commandToExecute?.extensionId,
+          );
         }
         setIsProcessing(false);
       }

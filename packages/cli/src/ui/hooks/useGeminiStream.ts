@@ -16,6 +16,7 @@ import type {
   ThoughtSummary,
   ToolCallRequestInfo,
   GeminiErrorEventValue,
+  ApiServiceImpl,
 } from '@google/gemini-cli-core';
 import {
   GeminiEventType as ServerGeminiEventType,
@@ -90,7 +91,7 @@ function showCitations(settings: LoadedSettings): boolean {
  * API interaction, and tool call lifecycle.
  */
 export const useGeminiStream = (
-  geminiClient: GeminiClient,
+  geminiClient: GeminiClient, // Keep for backward compatibility, but prefer apiService
   history: HistoryItem[],
   addItem: UseHistoryManagerReturn['addItem'],
   config: Config,
@@ -950,7 +951,10 @@ export const useGeminiStream = (
             lastPromptIdRef.current = prompt_id!;
 
             try {
-              const stream = geminiClient.sendMessageStream(
+              // Use ApiService for API calls instead of direct GeminiClient access
+              const apiService = config.getApiService();
+              const apiServiceImpl = apiService as ApiServiceImpl;
+              const stream = apiServiceImpl.sendMessageStreamWithEvents(
                 queryToSend,
                 abortSignal,
                 prompt_id!,
@@ -1046,7 +1050,6 @@ export const useGeminiStream = (
       addItem,
       setPendingHistoryItem,
       setInitError,
-      geminiClient,
       onAuthError,
       config,
       startNewPrompt,

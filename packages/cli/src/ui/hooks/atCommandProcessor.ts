@@ -12,8 +12,8 @@ import {
   debugLogger,
   getErrorMessage,
   isNodeError,
-  unescapePath,
   ReadManyFilesTool,
+  parseAllAtCommands as parseAllAtCommandsBackend,
 } from '@google/gemini-cli-core';
 import type { HistoryItem, IndividualToolCallDisplay } from '../types.js';
 import { ToolCallStatus } from '../types.js';
@@ -33,84 +33,7 @@ interface HandleAtCommandResult {
   shouldProceed: boolean;
 }
 
-interface AtCommandPart {
-  type: 'text' | 'atPath';
-  content: string;
-}
-
-/**
- * Parses a query string to find all '@<path>' commands and text segments.
- * Handles \ escaped spaces within paths.
- */
-function parseAllAtCommands(query: string): AtCommandPart[] {
-  const parts: AtCommandPart[] = [];
-  let currentIndex = 0;
-
-  while (currentIndex < query.length) {
-    let atIndex = -1;
-    let nextSearchIndex = currentIndex;
-    // Find next unescaped '@'
-    while (nextSearchIndex < query.length) {
-      if (
-        query[nextSearchIndex] === '@' &&
-        (nextSearchIndex === 0 || query[nextSearchIndex - 1] !== '\\')
-      ) {
-        atIndex = nextSearchIndex;
-        break;
-      }
-      nextSearchIndex++;
-    }
-
-    if (atIndex === -1) {
-      // No more @
-      if (currentIndex < query.length) {
-        parts.push({ type: 'text', content: query.substring(currentIndex) });
-      }
-      break;
-    }
-
-    // Add text before @
-    if (atIndex > currentIndex) {
-      parts.push({
-        type: 'text',
-        content: query.substring(currentIndex, atIndex),
-      });
-    }
-
-    // Parse @path
-    let pathEndIndex = atIndex + 1;
-    let inEscape = false;
-    while (pathEndIndex < query.length) {
-      const char = query[pathEndIndex];
-      if (inEscape) {
-        inEscape = false;
-      } else if (char === '\\') {
-        inEscape = true;
-      } else if (/[,\s;!?()[\]{}]/.test(char)) {
-        // Path ends at first whitespace or punctuation not escaped
-        break;
-      } else if (char === '.') {
-        // For . we need to be more careful - only terminate if followed by whitespace or end of string
-        // This allows file extensions like .txt, .js but terminates at sentence endings like "file.txt. Next sentence"
-        const nextChar =
-          pathEndIndex + 1 < query.length ? query[pathEndIndex + 1] : '';
-        if (nextChar === '' || /\s/.test(nextChar)) {
-          break;
-        }
-      }
-      pathEndIndex++;
-    }
-    const rawAtPath = query.substring(atIndex, pathEndIndex);
-    // unescapePath expects the @ symbol to be present, and will handle it.
-    const atPath = unescapePath(rawAtPath);
-    parts.push({ type: 'atPath', content: atPath });
-    currentIndex = pathEndIndex;
-  }
-  // Filter out empty text parts that might result from consecutive @paths or leading/trailing spaces
-  return parts.filter(
-    (part) => !(part.type === 'text' && part.content.trim() === ''),
-  );
-}
+// parseAllAtCommands now imported from backend service
 
 /**
  * Processes user input potentially containing one or more '@<path>' commands.
@@ -129,10 +52,10 @@ export async function handleAtCommand({
   messageId: userMessageTimestamp,
   signal,
 }: HandleAtCommandParams): Promise<HandleAtCommandResult> {
-  const commandParts = parseAllAtCommands(query);
-  const atPathCommandParts = commandParts.filter(
-    (part) => part.type === 'atPath',
-  );
+  // Use backend service for parsing
+  const parseResult = parseAllAtCommandsBackend(query);
+  const commandParts = parseResult.parts;
+  const atPathCommandParts = parseResult.atPathParts;
 
   if (atPathCommandParts.length === 0) {
     return { processedQuery: [{ text: query }], shouldProceed: true };
