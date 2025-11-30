@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// Export contracts
+export * from './contracts/index.js';
+
 // Export config
 export * from './config/config.js';
 export * from './config/defaultModelConfigs.js';

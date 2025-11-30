@@ -44,36 +44,36 @@ be implemented
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 [P] [US2] Create ApiRequest interface in
-      packages/core/src/contracts/api-contracts.ts
-- [ ] T006 [P] [US2] Create ApiResponse interface in
-      packages/core/src/contracts/api-contracts.ts
-- [ ] T007 [P] [US2] Create ResponseMetadata interface in
-      packages/core/src/contracts/api-contracts.ts
-- [ ] T008 [P] [US2] Create ResponseChunk interface in
-      packages/core/src/contracts/api-contracts.ts
-- [ ] T009 [P] [US2] Create BackendError class in
-      packages/core/src/contracts/error-contracts.ts
-- [ ] T010 [P] [US2] Create ErrorType enum in
-      packages/core/src/contracts/error-contracts.ts
-- [ ] T011 [P] [US2] Create ErrorCode enum in
-      packages/core/src/contracts/error-contracts.ts
-- [ ] T012 [P] [US2] Create createBackendError helper function in
-      packages/core/src/contracts/error-contracts.ts
-- [ ] T013 [P] [US3] Create ChatState interface in
-      packages/core/src/contracts/state-contracts.ts
-- [ ] T014 [P] [US3] Create SessionMetadata interface in
-      packages/core/src/contracts/state-contracts.ts
-- [ ] T015 [P] [US3] Create StateService interface in
-      packages/core/src/contracts/state-contracts.ts
-- [ ] T016 [P] [US2] Create AuthResult interface in
-      packages/core/src/contracts/auth-contracts.ts
-- [ ] T017 [P] [US2] Create AuthRequest interface in
-      packages/core/src/contracts/auth-contracts.ts
-- [ ] T018 [P] [US2] Create AuthService interface in
-      packages/core/src/contracts/auth-contracts.ts
-- [ ] T019 Export all contracts from packages/core/src/contracts/index.ts
-- [ ] T020 Update packages/core/package.json to export contracts in main/types
+- [x] T005 [P] [US2] Create ApiRequest interface in
+      packages/core/src/contracts/api.ts
+- [x] T006 [P] [US2] Create ApiResponse interface in
+      packages/core/src/contracts/api.ts
+- [x] T007 [P] [US2] Create ResponseMetadata interface in
+      packages/core/src/contracts/api.ts
+- [x] T008 [P] [US2] Create ResponseChunk interface in
+      packages/core/src/contracts/api.ts
+- [x] T009 [P] [US2] Create BackendError class in
+      packages/core/src/contracts/errors.ts
+- [x] T010 [P] [US2] Create ErrorType enum in
+      packages/core/src/contracts/errors.ts
+- [x] T011 [P] [US2] Create ErrorCode enum in
+      packages/core/src/contracts/errors.ts
+- [x] T012 [P] [US2] Create createBackendError helper function in
+      packages/core/src/contracts/errors.ts
+- [x] T013 [P] [US3] Create ChatState interface in
+      packages/core/src/contracts/state.ts
+- [x] T014 [P] [US3] Create SessionMetadata interface in
+      packages/core/src/contracts/state.ts
+- [x] T015 [P] [US3] Create StateService interface in
+      packages/core/src/contracts/state.ts
+- [x] T016 [P] [US2] Create AuthResult interface in
+      packages/core/src/contracts/auth.ts
+- [x] T017 [P] [US2] Create AuthRequest interface in
+      packages/core/src/contracts/auth.ts
+- [x] T018 [P] [US2] Create AuthService interface in
+      packages/core/src/contracts/auth.ts
+- [x] T019 Export all contracts from packages/core/src/contracts/index.ts
+- [x] T020 Update packages/core/package.json to export contracts in main/types
       fields
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in
