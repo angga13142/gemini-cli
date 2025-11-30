@@ -18,6 +18,7 @@ import type {
   GeminiErrorEventValue,
 } from '@google/gemini-cli-core';
 import { createApiAdapter } from '../../adapters/apiAdapter.js';
+import { formatErrorForDisplay } from '../utils/errorFormatter.js';
 import {
   GeminiEventType as ServerGeminiEventType,
   getErrorMessage,
@@ -1019,11 +1020,13 @@ export const useGeminiStream = (
               if (error instanceof UnauthorizedError) {
                 onAuthError('Session expired or is unauthorized.');
               } else if (!isNodeError(error) || error.name !== 'AbortError') {
+                // Format BackendError or regular errors for display
+                const errorMessage = formatErrorForDisplay(error);
                 addItem(
                   {
                     type: MessageType.ERROR,
                     text: parseAndFormatApiError(
-                      getErrorMessage(error) || 'Unknown error',
+                      errorMessage,
                       config.getContentGeneratorConfig()?.authType,
                       undefined,
                       config.getModel(),

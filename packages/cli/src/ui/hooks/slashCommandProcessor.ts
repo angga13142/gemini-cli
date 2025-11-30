@@ -569,10 +569,14 @@ export const useSlashCommandProcessor = (
             commandToExecute?.extensionId,
           );
         }
+        // Format BackendError or regular errors for display
+        const { formatErrorForDisplay } = await import(
+          '../utils/errorFormatter.js'
+        );
         addItem(
           {
             type: MessageType.ERROR,
-            text: e instanceof Error ? e.message : String(e),
+            text: formatErrorForDisplay(e),
           },
           Date.now(),
         );

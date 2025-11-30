@@ -11,6 +11,7 @@ import type { Content } from '@google/genai';
 import type { TextBuffer } from '../components/shared/text-buffer.js';
 import { isSlashCommand } from '../utils/commandUtils.js';
 import { createApiAdapter } from '../../adapters/apiAdapter.js';
+import { formatErrorForDisplay } from '../utils/errorFormatter.js';
 
 export const PROMPT_COMPLETION_MIN_LENGTH = 5;
 export const PROMPT_COMPLETION_DEBOUNCE_MS = 250;
@@ -142,9 +143,9 @@ export function usePromptCompletion({
           (error instanceof Error && error.name === 'AbortError')
         )
       ) {
-        debugLogger.warn(
-          `[WARN] prompt completion failed: : (${error instanceof Error ? error.message : String(error)})`,
-        );
+        // Format BackendError or regular errors for logging
+        const errorMessage = formatErrorForDisplay(error);
+        debugLogger.warn(`[WARN] prompt completion failed: ${errorMessage}`);
         // Clear the last requested text to allow retry only on real errors
         lastRequestedTextRef.current = '';
       }
